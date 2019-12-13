@@ -1,0 +1,22 @@
+slurmstepd: error: task/cgroup: unable to add task[pid=1001] to memory cg '(null)'
+slurmstepd: error: xcgroup_instantiate: unable to create cgroup '/sys/fs/cgroup/memory/slurm/uid_1679' : No space left on device
+slurmstepd: error: jobacct_gather/cgroup: unable to instanciate user 1679 memory cgroup
+Note that users no longer need to load the SLURM module. You may remove 'module
+load slurm' from your scripts. 
+Please read this resource guide to understand the above behavior:
+https://www.marcc.jhu.edu/getting-started/working-with-modules-on-centos-7/ 
+
+Lmod is automatically replacing "intel/18.0" with "gcc/5.5.0".
+
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) openmpi/3.1
+
+Note that users no longer need to load the SLURM module. You may remove 'module
+load slurm' from your scripts. 
+Please read this resource guide to understand the above behavior:
+https://www.marcc.jhu.edu/getting-started/working-with-modules-on-centos-7/ 
+Traceback (most recent call last):
+  File "Corse_tau_leap_less_param_Blood", line 51, in <module>
+    os.chdir('/Users/klahouel/Desktop/PNASTumor/Pyt_files_Blood_1')
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/klahouel/Desktop/PNASTumor/Pyt_files_Blood_1'

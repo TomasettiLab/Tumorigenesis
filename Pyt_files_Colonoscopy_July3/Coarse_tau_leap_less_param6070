@@ -1,0 +1,2192 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Sep  2 22:36:12 2018
+
+@author: klahouel
+"""
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Jun 19 17:36:52 2017
+
+@author: klahouel
+"""
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Oct 20 23:22:01 2016
+
+@author: kamel
+"""
+# Two Carrying capacities one for symmetric division and one for asymetric division
+# -*- coding: utf-8 -*-
+#cancerMutations2.py
+#Feedback Model
+#Last Updated: 4/26/2015, Added feature to print out population of individual type 3 clones
+
+import os
+from os import path
+import argparse
+import numpy as np
+import scipy as sp
+import numpy.matlib as npmat
+import time
+import multiprocessing as mp
+import warnings
+from itertools import product
+import sklearn.gaussian_process as gp
+import sklearn.gaussian_process.kernels as kn
+#import pyDOE as pyl
+import datetime
+warnings.filterwarnings("ignore")
+
+
+
+
+
+
+class tissue:
+    #parameters:
+    #N: wild type population size
+    #ngrp: number of mutation groups
+    #pmute: probability of mutation
+    #rho0: slope parameter for asymetric differentiation
+    #delta: update time step for simulation
+    
+    #pgrp: conditional probability of groups given mutation. If
+    #      length=1,all groups are equi-likely 
+    #T: maximum lifetime (in weeks)
+    #t3Threshold: number of mutations in last type for cancer to
+    #             occur.
+    #epsilon0: radius of lowest to highest rate intervals for normal
+    #          population homeostasis
+    #cang: angio-genesis effect (increased resource)
+    #capp: apoptosis effect (death rate decrease)
+    #cpro: proliferation effect (division increase)
+    
+    
+    
+   
+    
+    
+    
+    
+    
+    def __init__(self, N = 1, dcell = 1e9, ngrp=18, pmute =1e-6,pmuteLOH=1e-5,pmutesuperLOH=10**(-3),  pgrp = [1], alpha=1., capp=1.5 ,cappInter=1., targ_size=10.,targ_size1h=100., delta=0.5, 
+                 T=52*75+36,lastTime=40,deltaMute=4*1e-6,deltaOnc1=0.001,psym=0.0525,pasymdiff=0.9,psymdiff=0.1-0.0525,deltapsym=1.7e-3,PowerRate=0.7,TargetDiv=0.07,mult=16,powersize=9.,col=0,colhapp=0):
+        
+        self.Tsind=np.append([0,2,3],np.arange(10,18))
+        self.Oncind=np.append([1],np.arange(4,10)) 
+        self.PathwaysCF=[{0,1,2},{3}]
+        self.PathwaysCS=[{4,5,6},{7},{8,9},{10}]
+        self.PathwaysGM=[{11},{12},{13},{14},{15},{16},{17}]   
+        self.N = int(N)
+        self.crypt_size = 1
+        self.nb_crypt = self.N /self.crypt_size  
+        
+        
+        self.dcell = int(dcell)
+        
+        self.ngrp = ngrp
+        #self.pchange = pchange
+        self.nmut = 0
+        
+        
+        self.alpha = alpha
+        self.capp = capp
+        self.cappInter=cappInter
+        self.sigma_app = float(targ_size)*((self.alpha+1)*targ_size + (self.alpha-1)*self.crypt_size)/((self.alpha-1)*targ_size + (self.alpha+1)*self.crypt_size)
+        
+        self.lastTime=lastTime
+        
+        
+        self.delta = delta
+        self.deltapsym=deltapsym
+        if len(pgrp) == 1:
+            self.pgrp = np.append(np.ones(ngrp-1)/(ngrp-1),0)
+            self.pgrp[4] *=1
+            self.pgrp =self.pgrp/self.pgrp.sum()
+        else:
+            self.pgrp = pgrp
+            
+        self.pmute = pmute
+        self.pmuteLOH=pmuteLOH
+        self.pmutesuperLOH=pmutesuperLOH
+        self.deltaMute=deltaMute
+        self.T = T
+        self.PowerRate=PowerRate
+        self.TargetDiv=TargetDiv
+        self.groupsize = np.array([N] + [0]*self.ngrp, dtype=int)
+        self.kchange = .1
+        self.maxAge = 500
+        self.deltaOnc1=deltaOnc1
+        
+        self.psym=psym
+        self.pasymdiff=pasymdiff
+        self.psymdiff=psymdiff
+        self.age=0
+        self.mult=mult
+        self.powersize=powersize
+        self.col=col
+        self.colhapp=colhapp
+        
+       
+        
+   
+
+    #basic division/death rate with total population feedback
+    def hfun(self, n, a, s, ep,flag=1):
+        #alpha=(75*52+36-self.age)/(75*52+36-20*52-36)
+        alpha=self.age-(20*52+36)
+        #Mult=alpha+(1-alpha)/2
+        Lam0=(75*52-20*52)/np.log(2)
+        Mult=np.exp(-alpha/Lam0)
+        #a=np.log(1+((s-1)*float(n)/float(s)))/np.log(s)
+        #u = float(7)/(3.5+a)
+        if (float(10*n)/(np.sqrt(1)*10**self.powersize*s))<1 and (self.age<=20*52+36):
+           #u =self.mult*np.exp(np.log(4/self.mult)/((52*20)**(1))*(20*52)**(1))*(3*np.exp(1)*0.45/3.5*np.exp(-1/(1-(float(10*n)/(np.sqrt(1)*10**self.powersize*s))**(self.PowerRate)))+self.TargetDiv)
+           u=np.exp(1)*(1.75-self.TargetDiv)*np.exp(-1/(1-(float(10*n)/(np.sqrt(1)*10**self.powersize*s))**(self.PowerRate)))+self.TargetDiv
+        elif (float(10*n)/(10**self.powersize*s))<1 and (self.age>20*52+36):
+           #u=4*(3*np.exp(1)*0.45/3.5*np.exp(-1/(1-(float(10*n)/(np.sqrt(1)*10**self.powersize*s))**(self.PowerRate)))+self.TargetDiv)  
+           u=(Mult**(flag))*np.exp(1)*(1.75-self.TargetDiv)*np.exp(-1/(1-(float(10*n)/(np.sqrt(1)*10**self.powersize*s))**(self.PowerRate)))+(Mult**flag)*self.TargetDiv
+        else:
+           u=1*self.TargetDiv*(self.age<52*20+36)+(Mult**(flag))*self.TargetDiv*(self.age>=52*20+36)
+        
+        
+            #a * self.crypt_size + b* float(n))/(self.crypt_size + float(n))
+            # s is the target size
+            # n is 
+        return u
+    
+    
+        
+    
+
+    #
+    def CleanList(self,L):
+       ind=0
+       l=len(L)
+       
+       for i in range(l):
+           if ((L[ind].sum())==L[ind][0,0,0]):
+               L.pop(ind)
+           else:
+               ind +=1
+       return L
+    
+    
+    def getPreRateGeneric(self):
+    
+        Rates=np.zeros((3,3,2,4))
+        AsymRates=np.zeros((3,3,2))
+        #deltaProb=0.01/2
+        #self.psymdiff=self.psym-deltaProb
+        psym0=self.psym+self.DeltAge
+        psymdiff0=self.psymdiff
+        pasymdiff0=self.pasymdiff       
+        tauDiv0=1
+        tauDeathc=(self.psym-self.psymdiff)
+        pmute0=self.pmute
+        
+        for i,j,k in product(range(3),range(3),range(2)):
+            psym=psym0+i*self.deltapsym
+            psymdiff=psymdiff0-(1*(i==1)+(2)*(i==2))*self.deltapsym
+            pasymdiff=pasymdiff0
+            tauDiv=tauDiv0*(self.capp**(1*(j==1)+(2)*(j==2)))
+            pmute=pmute0+k*self.deltaMute            
+            Rates[i,j,k,0]=tauDeathc
+            Rates[i,j,k,1]=tauDiv*psymdiff    
+            Rates[i,j,k,2]=tauDiv*psym*(1-pmute)
+            Rates[i,j,k,3]=tauDiv*pasymdiff*float(pmute)/2+tauDiv*psym*float(pmute)
+            AsymRates[i,j,k]=tauDiv*pasymdiff
+            
+           
+        self.Rates=self.delta*Rates
+        self.AsymRates=self.delta*AsymRates
+        return self.delta*Rates
+    
+    
+
+        
+    
+    def GenericReactions(self):
+        
+     GenericRates=np.zeros((3,3,2,5))
+      
+     for i,j,k in product(range(3),range(3),range(2)):
+          GenericRates[i,j,k,0]=self.Rates[i,j,k,0]+self.Rates[i,j,k,1]
+          GenericRates[i,j,k,1]=self.Rates[i,j,k,2]
+          GenericRates[i,j,k,2]=self.Rates[i,j,k,3]*(4*10**(-3))*(1/(1+i))
+          GenericRates[i,j,k,3]=self.Rates[i,j,k,3]*(7*10**(-3))*(1/(1+j))       
+          GenericRates[i,j,k,4]=self.Rates[i,j,k,3]*(7*10**(-3))        
+                    
+                    
+            
+            
+                
+            
+            
+           
+     self.ReactionsRate=GenericRates
+     return GenericRates
+ 
+    def TypesIndices(self):
+        Type1=[[],[],[]]
+        Type2=[[],[],[]]
+        Type3=[[],[],[]]
+        for i,j,k in product(range(3),range(3),range(2)):
+            if (i+j+k)==1:
+                Type1[0].append(i)
+                Type1[1].append(j)
+                Type1[2].append(k)
+            elif  (i+j+k)==2:
+                Type2[0].append(i)
+                Type2[1].append(j)
+                Type2[2].append(k)
+            elif (i+j+k)>=3:
+                Type3[0].append(i)
+                Type3[1].append(j)
+                Type3[2].append(k)
+        self.IndType1=Type1
+        self.IndType2=Type2
+        self.IndType3=Type3
+            
+                
+            
+        
+    def Likelihoods(self,D,Y):
+        l=np.log(sp.stats.norm.cdf(Y*D))
+        dl=Y*sp.stats.norm.pdf(D)/sp.stats.norm.cdf(Y*D)
+        ddl=-sp.stats.norm.pdf(D)**2/sp.stats.norm.cdf(Y*D)**2-Y*D*sp.stats.norm.pdf(D)/sp.stats.norm.cdf(Y*D)
+        return l, dl, np.diag(ddl)
+    
+#    
+    def MaxLikelihood(self,K,Y,tol):
+        n=np.shape(Y)[0]
+        D=np.zeros(n)
+        #DOld=np.ones(n)
+        Lst=[]
+        grads=[]
+        values=[]
+        gr=np.ones(n)
+        Ds=[]
+        k=0
+        while (np.linalg.norm(gr)>tol) and k<1000:
+            k +=1
+            #DOld=D
+            Lik=self.Likelihoods(D,Y)
+            W=-Lik[2]
+            WHalf=sp.linalg.sqrtm(W)
+            L=np.linalg.cholesky(np.diag(np.ones(n))+WHalf @ K @ WHalf)
+            b=W @ D+Lik[1]
+            d=np.linalg.solve(L,WHalf @ K @ b)   
+            a=b- WHalf @ (np.linalg.solve(L.transpose(),d))
+            gr=Lik[1]-np.linalg.solve(K+0.0000001*np.diag(np.ones(n)),D)
+            grads.append(np.linalg.norm(gr))
+            D=np.dot(K,a)                      
+            values.append(-1/2*np.dot(a,D)+np.sum(Lik[0]))
+            Lst.append(-1/2*np.dot(a,D)+np.sum(Lik[0])-np.sum(np.diag(L)))
+            Ds.append(D)
+        return D,Lst,grads,values, Ds
+    
+    
+    def EPApprox(self,K,Y,tol):
+        n=np.shape(Y)[0]
+        nuTilde=np.zeros(n)
+        tauTilde=np.zeros(n)
+        nuOld=np.ones(n)
+        tauOld=np.ones(n)
+        Sigma=np.copy(K)
+        mu=np.zeros(n)
+        k=0
+        while ((np.linalg.norm(nuTilde-nuOld,np.inf)+np.linalg.norm(tauTilde-tauOld,np.inf))>tol) and k<50:
+               nuOld=np.copy(nuTilde)
+               tauOld=np.copy(tauTilde)
+               k +=1
+               
+               for i in range(n):
+                   tauMinusI=Sigma[i,i]**(-2)-tauTilde[i]
+                   nuMinusI=Sigma[i,i]**(-2)*mu[i]-tauTilde[i]
+                   muMinusI=nuMinusI/tauMinusI
+                   sigmaMinusI2=1/tauMinusI
+                   zI=Y[i]*muMinusI/np.sqrt(1+sigmaMinusI2)
+                   #ZhatI=sp.stats.norm.cdf(zI)
+                   muHatI=muMinusI+Y[i]*sigmaMinusI2*sp.stats.norm.pdf(zI)/(sp.stats.norm.cdf(zI)*np.sqrt(1+sigmaMinusI2))
+                   sigmaHatI2=sigmaMinusI2-(zI+sp.stats.norm.pdf(zI)/sp.stats.norm.cdf(zI))*(sigmaMinusI2**2*sp.stats.norm.pdf(zI)/((1+sigmaMinusI2)*sp.stats.norm.cdf(zI)))
+                   deltaTauTilde=1/sigmaHatI2-tauMinusI-tauTilde[i]
+                   tauTilde[i]=tauTilde[i]+deltaTauTilde
+                   #print(deltaTauTilde)
+                   nuTilde[i]=(1/sigmaHatI2)*muHatI-nuMinusI
+                   sI=Sigma[:,i].reshape((n,1))
+                   Sigma -=(1/((1/deltaTauTilde)+Sigma[i,i]))*(sI @ sI.transpose())
+                   mu= Sigma @ nuTilde
+               print(((np.linalg.norm(nuTilde-nuOld,np.inf)+np.linalg.norm(tauTilde-tauOld,np.inf))))
+               STilde=np.diag(tauTilde)
+               STildeHalf=sp.linalg.sqrtm(STilde)
+               L=np.linalg.cholesky(np.diag(np.ones(n))+STildeHalf @ K @ STildeHalf)
+               V=np.linalg.solve(L.transpose(),STildeHalf @ K)
+               Sigma=K-((V.transpose()) @ V)
+               mu= Sigma @ nuTilde
+        return nuTilde,tauTilde,k
+               
+                   
+              
+        
+
+
+
+
+#    
+#    def MaxLikelihood(self,K,Y,tol):
+#        n=np.shape(Y)[0]
+#        D=np.zeros(n)
+#        #DOld=np.ones(n)
+#        Lst=[]
+#        grads=[]
+#        values=[]
+#        grad=np.ones(n)
+#        Ds=[]
+#        k=0
+#        while (np.linalg.norm(grad) > tol) and k<1000:
+#            k +=1
+#            #DOld=D
+#            Lik=self.Likelihoods(D,Y)
+#            grad=Lik[1]-np.linalg.solve(K,D)
+#            grads.append(np.linalg.norm(grad))
+#            #print(np.linalg.det(K))
+#            Hessian=(Lik[2]-np.linalg.inv(K))
+#            #print(np.linalg.det(Hessian))
+#            D -= np.linalg.solve(Hessian,grad)
+#            values.append(np.sum(Lik[0])-1/2*np.dot(D.transpose(),np.linalg.solve(K,D)))
+#            #print(D)
+#            Ds.append(D)
+#        return D,Lst,grads,values, Ds
+    
+#    def MaxLikelihoodGradient(self,K,Y,tol):
+#        n=np.shape(Y)[0]
+#        D=np.zeros(n)
+#        grads=[]
+#        values=[]
+#        grad=np.ones(n)
+#        Ds=[]
+#        k=0
+#        while (np.linalg.norm(grad)>tol) and k<1000:
+#              k +=1
+#              Lik=self.Likelihoods(D,Y)
+#              grad=Lik[1]-np.linalg.solve(K,D)
+#              grads.append(np.linalg.norm(grad))
+#              D +=(1/k)*grad
+#              values.append(np.sum(Lik[0])-1/2*np.dot(D.transpose(),np.linalg.solve(K,D)))
+#              Ds.append(D)
+#        return D,grads,values, Ds
+              
+              
+    
+    
+    
+    
+    
+    def PosteriorMeanVariance(self,K,Y,tol,x,X,C,l):  
+        d=np.shape(x)[0]           
+        N=np.shape(Y)[0]
+        #K=np.zeros
+        #K=np.zeros((N,N))
+        Kstar=np.zeros(N)
+        Kstarprime=np.zeros((N,d))
+#        for i,j in product(range(N),range(N)):
+#            K[i,j]=C**2*np.exp(-1/(2*l**2)*(np.linalg.norm(X[i,:]-X[j,:]))**2)
+        DHat=self.MaxLikelihood(K+0.0*np.diag(np.ones(N)),Y,tol)         
+        for i in range(N):
+            Kstar[i]=C**2*np.exp(-1/(2*l**2)*(np.linalg.norm(X[i,:]-x))**2) 
+        for i,j in product(range(N),range(d)):
+            Kstarprime[i,j]=-1/(l**2)*Kstar[i]*(x[j]-X[i,j])                          
+        kStar=C**2
+        Lik=self.Likelihoods(DHat[0],Y)
+        PMean=np.dot(Kstar,Lik[1])
+        PmeanPrime=np.dot(Kstarprime.transpose(),Lik[1])
+        W=-Lik[2]
+        L=np.linalg.cholesky(np.diag(np.ones(N))+np.sqrt(W) @ K @ np.sqrt(W))
+        #A=np.linalg.solve((K-np.linalg.inv(Lik[2])),Kstar)
+        v=np.linalg.solve(L,np.sqrt(W) @ Kstar)
+        vPrime=np.linalg.solve(L, np.sqrt(W) @ Kstarprime)
+        PVariance=kStar-np.dot(v,v)
+        PVariancePrime=-2* (vPrime.transpose() @ v)
+        ObjectivePrime=sp.stats.norm.pdf(PMean/np.sqrt(1+PVariance))*(PmeanPrime*(1+PVariance)**(-1/2)-1/2*PMean*PVariancePrime*(1+PVariance)**(-3/2))
+        return PMean,PVariance,sp.stats.norm.cdf(PMean/np.sqrt(1+PVariance)), ObjectivePrime,K
+    
+    
+    
+    
+    
+    
+    
+    def FitGradient(self,L_K,Y,tol,X,C,l,Const,LearningRate,iterations):
+        N=np.shape(Y)[0]
+        d=np.shape(Y)[1]
+        x=np.copy(X[N-2,:])
+        #xold=np.ones(d)
+        Jacobian=np.zeros((d,d))
+        values=np.zeros(d)
+        k=0
+        while  k<iterations:
+               k +=1
+               #print(k)
+               print((values**2).sum())
+               #xold=np.copy(x)
+               for i in range(d):
+                   Post=self.PosteriorMeanVariance(L_K[i],Y[:,i],tol,x,X,C[i],l[i])
+                   values[i]=Post[2]-Const[i]
+                   Jacobian[i,:]=Post[3]
+                   #print (Jacobian,np.linalg.det(Jacobian))
+               gradient=np.sum(np.diag(values) @ Jacobian ,axis=0)    
+               x -=(2*LearningRate)*gradient
+               
+               x[0]=max(0.0501,min(x[0],0.06))/0.0501
+               x[1]=max(1,min(x[1],2))
+               x[2]=max(1e-3,min(x[2],2e-3))*1e3
+        return x, values,gradient
+            
+    
+    def ChooseBestParam(self,Y,tol,X,X_new,C,l,Const):
+        d=np.shape(Y)[1]           
+        N=np.shape(Y)[0]
+        Perf=np.zeros(N)
+        for i in range(N):
+            for j in range(d):
+                Post=self.PosteriorMeanVariance(Y[:,j],tol,X_new[i,:],X,C[j],l[j])
+                Perf[i] +=np.abs(Post[2]-Const[j])
+        index=np.argmin(Perf)
+        return index,X_new[index,:],Perf[index]
+                
+        
+        
+            
+    
+    
+    
+            
+        
+        
+    
+        
+    
+  
+    
+    
+    
+        
+        
+    
+    
+    
+    
+    
+   
+             
+         
+         
+         
+
+
+
+
+    # computes probability of group hit given mutation    
+    # computes probability of group hit given mutation    
+    
+        
+    
+    def CancerTest(self,Tabmutations):
+        
+        Type1=np.any(Tabmutations[self.IndType1[0],self.IndType1[1],self.IndType1[2],:]>100,axis=0)
+        Type2=np.any(Tabmutations[self.IndType2[0],self.IndType2[1],self.IndType2[2],:]>100,axis=0)
+        Type3=np.any(Tabmutations[self.IndType3[0],self.IndType3[1],self.IndType3[2],:]>100,axis=0)
+        
+        #self.Plastic=np.logical_and(self.CrTot>2*10**8,self.CrTot/self.CrSizes<10)
+        #WinType=np.logical_and(Type3,self.Plastic)      
+        return np.any(Type3),Type3,Type2,Type1
+        
+    
+    
+    def TestCancerClonal(self):
+        self.TypesIndices()
+        Time=time.time()
+        t=0
+        self.DeltAge=0
+        self.age=20*52
+        self.getPreRateGeneric()
+        self.GenericReactions()
+        self.age=0
+        L=set()
+        TabMutations=np.zeros((3,3,2,int(1.1*10**7)))
+        TabDifferentiated=np.zeros((6,int(1.1*10**7)))
+        TabHistory=5000*np.ones((3,int(1.1*10**7)))
+        Tmutations=np.zeros((2,2,2,2))
+        self.Diagnostic=False
+        self.status=False
+        self.CrTot45=np.array([10**11, 10**11])
+        self.CrTot65=np.array([10**11, 10**11])
+        self.CrTot50=np.array([10**11, 10**11])
+        self.CrTot70=np.array([10**11, 10**11])
+        
+        self.Type1=np.array([True])
+        self.Type2=np.array([True])
+        
+        
+        self.Type145=np.array([True])
+        self.Type245=np.array([True])
+        
+        self.Type165=np.array([True])
+        self.Type265=np.array([True])
+        
+        self.Type150=np.array([True])
+        self.Type250=np.array([True])
+        
+        self.Type170=np.array([True])
+        self.Type270=np.array([True])
+        
+        
+        
+        
+        
+        self.Nold=0
+        self.N=0
+        while t<self.T and not(self.status):
+              self.Nold=self.N
+              #print(t)
+              
+                 
+              
+              
+#           
+#              if t==52*40:
+#
+#                 self.pmute=10**(-6)
+#
+#                 self.getPreRateGeneric()
+#
+#                 self.GenericReactions()
+            
+              
+              
+              self.Diagnostic,self.Type3,self.Type2,self.Type1=self.CancerTest(TabMutations[:,:,:,list(L)])
+              
+#              if self.Diagnostic:
+#                      self.TabMutations=TabMutations[:,:,:,list(L)]
+#                      self.CrSizes=np.sum(self.TabMutations,axis=(0,1,2))+self.crypt_size                                  
+#                      self.TabDifferentiated=TabDifferentiated[:,list(L)]
+#                      self.DiffCrSizes=np.dot(2**np.arange(7),self.TabDifferentiated)+(self.crypt_size)*(2**7-1)
+#                      self.CrTot=self.DiffCrSizes+self.CrSizes
+#                      self.TabHistory=TabHistory[:,list(L)]
+#                      
+#                      self.Plastic=np.logical_and(self.CrTot>2*10**8,self.CrTot/self.CrSizes<10)
+#                      self.status=np.any(np.logical_and(self.CancerTest(self.TabMutations)[1],self.Plastic))
+              
+              
+              IndType1=np.where(self.Type1)[0]
+              IndType2=np.where(self.Type2)[0]
+              IndType3=np.where(self.Type3)[0]
+              
+              if len(IndType1)>0:
+                 
+                 TabHistory[0,np.array(list(L))[IndType1]]=np.minimum(TabHistory[0,np.array(list(L))[IndType1]],t)
+                 
+              if len(IndType2)>0:
+                 TabHistory[1,np.array(list(L))[IndType2]]=np.minimum(TabHistory[1,np.array(list(L))[IndType2]],t)
+                 
+              if len(IndType3)>0:
+                 TabHistory[2,np.array(list(L))[IndType3]]=np.minimum(TabHistory[2,np.array(list(L))[IndType3]],t)
+                 
+              
+              
+                 
+              if t<=36:
+                self.N=np.ceil((.1+10*1388*2*t)/.1)
+                
+              elif (t>36) and (t<(20*52+36)):
+                self.N=np.ceil((.1+10*1388*72+10*463*2*(t-36))/.1)
+                #self.N=np.ceil(Slope*np.sqrt(t))
+              else:
+                self.N=np.ceil((.1+10*1388*72+10*463*2*(52*20))/.1)
+              
+                
+              #print(self.N) 
+              
+              
+              
+              if t==0:
+                 #self.DeltAge=100*1388*2/self.hfun(10,1,10,1)
+                 self.DeltAge=0
+                 self.getPreRateGeneric()
+
+                 self.GenericReactions()
+                 
+                 
+              elif t<=36:
+                 
+                 #A=10*1388*2*10
+                 
+                 #B=10
+                 
+                 #N0=1
+                 
+                 #self.DeltAge=(np.log(A*t+B)-np.log(N0))/((t+0.000001)*self.hfun(10,1,10,1))
+                 
+                 #self.DeltAge=np.log(self.N)/((t)*self.hfun(10,1,10,1))
+                 self.DeltAge=0
+                                  
+                 self.getPreRateGeneric()
+
+                 self.GenericReactions()
+                 
+            
+#             
+              elif (t>=36) and (t<(20*52+36)):
+                 
+                 #A=10*463*2*10
+                 
+                 #B=(1+10*1388*72)*10-36*10*463*2*10
+                 
+                 #N0=10*1388*72*10+10
+                 
+                 #self.DeltAge=np.log(self.N)/((t)*self.hfun(10,1,10,1))
+                 self.DeltAge=0
+                 #self.DeltAge=(np.log(A*t+B)-np.log(N0))/(t*self.hfun(10,1,10,1))
+                                  
+                 self.getPreRateGeneric()
+
+                 self.GenericReactions()
+              else:
+                
+                 self.DeltAge=0
+                 
+                 self.getPreRateGeneric()
+
+                 self.GenericReactions()
+            
+            
+              #print(self.ReactionsRate[0,0,0,2])
+              
+                
+              
+              self.nb_crypt=np.ceil(self.N/10)
+              self.nb_cryptOld=np.ceil(self.Nold/10)
+              #print(self.nb_crypt-self.nb_cryptOld)
+              
+              self.crypt_size=int(np.ceil(self.N/self.nb_crypt))
+              
+
+              #print(int(self.nb_crypt-self.nb_cryptOld))
+              if t<=(20*52+36):
+                 self.IndInheritence=np.intersect1d(np.random.randint(0,self.nb_cryptOld+1,int(self.nb_crypt-self.nb_cryptOld)),np.array(list(L)))
+                 if len(self.IndInheritence)>0:
+                    #print(len(self.IndInheritence))
+                    TabMutations[:,:,:,np.arange(int(self.nb_cryptOld),int(self.nb_cryptOld)+len(self.IndInheritence))]=TabMutations[:,:,:,self.IndInheritence]
+                    L=L.union(np.arange(int(self.nb_cryptOld),int(self.nb_cryptOld)+len(self.IndInheritence)))
+                 
+                          
+              
+              
+              #print(t)
+              if t<50*52:
+              
+              
+                 N=np.random.poisson(self.N*self.hfun(10,1,10,1)*self.ReactionsRate[0,0,0,2]*np.array([1,7/4,7/4]))
+              
+              
+                 A0=np.random.randint(0,self.nb_crypt+1,N[0])
+                 A1=np.random.randint(0,self.nb_crypt+1,N[1])
+                 A2=np.random.randint(0,self.nb_crypt+1,N[2])
+              
+              
+              
+                 unique0,count0=np.unique(A0,return_counts=True)
+                 unique1,count1=np.unique(A1,return_counts=True)
+                 unique2,count2=np.unique(A2,return_counts=True)
+               
+                 TabMutations[1,0,0,unique0] +=count0
+                 TabMutations[0,1,0,unique1] +=count1 
+                 TabMutations[0,0,1,unique2] +=count2
+              
+                 L =L.union(set(unique0),set(unique1),set(unique2))
+              
+              #print(L)
+              
+              
+              
+              
+              
+              if len(L)>0:
+                  
+                  
+                  
+                  
+                  
+                  ind=list(L)
+                  
+                  Tmutations=np.copy(TabMutations[:,:,:,(ind)])
+                  
+                  TDifferentiated=np.copy(TabDifferentiated[:,ind])
+                  
+                  TDifferentiated=np.roll(TDifferentiated,1,axis=0)
+                  
+                  
+                  
+                  CrSizes=np.sum(Tmutations,axis=(0,1,2))
+                  
+                  self.CrSizes=CrSizes
+                  
+                  #print(CrSizes)
+                  DivRates=np.zeros(len(L))
+                  NumberDiff=np.dot(2**np.arange(6),TabDifferentiated[:,list(L)])
+                  
+                  for k in range(len(L)):
+                      
+                      DivRates[k]=self.hfun(CrSizes[k]+NumberDiff[k],1,10,1)   
+                  
+                  
+                  
+                  
+                    
+                  
+                      
+                  ReactionsMutants0=np.tile(np.reshape(self.ReactionsRate[:,:,:,2],(3,3,2,1)),(1,1,1,len(L)))*Tmutations
+                                           
+                  ReactionsMutants1=np.tile(np.reshape(self.ReactionsRate[:,:,:,3],(3,3,2,1)),(1,1,1,len(L)))*Tmutations
+                                           
+                  ReactionsMutants2=np.tile(np.reshape(self.ReactionsRate[:,:,:,4],(3,3,2,1)),(1,1,1,len(L)))*Tmutations
+                                           
+                  DivRatesTable=np.tile(np.reshape(DivRates,(1,1,1,len(L))),(3,3,2,1))
+                  
+                  ReactionsMutants0 *=DivRatesTable
+                  
+                  ReactionsMutants1 *=DivRatesTable
+                  
+                  ReactionsMutants2 *=DivRatesTable
+                  
+                  ReactionsDeath1=Tmutations*self.hfun(10,1,10,1,flag=1)*np.tile(np.reshape(self.Rates[:,:,:,0],(3,3,2,1)),(1,1,1,len(L)))
+                  ReactionsDeath2=Tmutations*DivRatesTable*np.tile(np.reshape(self.Rates[:,:,:,1],(3,3,2,1)),(1,1,1,len(L)))
+                  
+                  ReactionsReplicate=Tmutations*DivRatesTable*np.tile(np.reshape(self.Rates[:,:,:,2],(3,3,2,1)),(1,1,1,len(L)))
+                  
+                  #print("d1 is: {0}".format((np.tile(np.reshape(self.Rates[:,:,:,0],(3,3,2,1)),(1,1,1,len(L)))+DivRatesTable*np.tile(np.reshape(self.Rates[:,:,:,1],(3,3,2,1)),(1,1,1,len(L)))).mean()))
+                  
+                  #print("d2 is: {0}".format((DivRatesTable*np.tile(np.reshape(self.Rates[:,:,:,2],(3,3,2,1)),(1,1,1,len(L)))).mean()))
+                  
+                  ReactionsDiff1=Tmutations*DivRatesTable*np.tile(np.reshape(self.AsymRates,(3,3,2,1)),(1,1,1,len(L)))
+                  #print(np.mean(ReactionsDiff1))
+                  #print(np.max(ReactionsDiff1))
+                  
+                  
+                  PoissonReactionsMutants0=np.random.poisson(ReactionsMutants0)
+                  
+                  PoissonReactionsMutants1=np.random.poisson(ReactionsMutants1)
+                  
+                  PoissonReactionsMutants2=np.random.poisson(ReactionsMutants2)
+                  
+                  PoissonReactionsDeath1=np.random.poisson(ReactionsDeath1)
+                  PoissonReactionsDeath2=np.random.poisson(ReactionsDeath2)
+                  PoissonReactionsDeath=PoissonReactionsDeath1+PoissonReactionsDeath2
+                  
+                  
+                  
+                  
+                  
+                  PoissonReactionsReplicate=np.random.poisson(ReactionsReplicate)
+                  
+                  
+                  
+                  #print(PoissonReactionsReplicate.mean())
+                  
+                  PoissonReactionsDiff=np.random.poisson(ReactionsDiff1)+2*PoissonReactionsDeath2
+                                                        
+                  TDifferentiated[0,:]=np.sum(PoissonReactionsDiff,axis=(0,1,2))                                     
+                  
+                  
+                  MutantsUpdate0=np.roll(PoissonReactionsMutants0,1,axis=0)
+                  MutantsUpdate0[1,:,:,:] +=MutantsUpdate0[0,:,:,:]
+                  MutantsUpdate0[0,:,:,:] = 0
+                                
+                  MutantsUpdate1=np.roll(PoissonReactionsMutants1,1,axis=1)
+                  MutantsUpdate1[:,1,:,:] +=MutantsUpdate1[:,0,:,:]
+                  MutantsUpdate1[:,0,:,:] = 0
+                                
+                  MutantsUpdate2=np.roll(PoissonReactionsMutants2,1,axis=2)
+                  MutantsUpdate2[:,:,1,:] +=MutantsUpdate2[:,:,0,:]
+                  MutantsUpdate2[:,:,0,:] = 0
+                  
+                  Tmutations +=(MutantsUpdate0+MutantsUpdate1+MutantsUpdate2+PoissonReactionsReplicate-PoissonReactionsDeath)
+                  #print(Tmutations.shape)
+                  Tmutations=np.maximum(Tmutations,np.zeros((3,3,2,len(L))))
+                  
+                  
+                  #print(Tmutations.shape)
+                  TabMutations[:,:,:,(ind)]=np.copy(Tmutations)
+                  TabDifferentiated[:,ind]=np.copy(TDifferentiated)   
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  ind=np.array(ind)            
+                  ind=np.copy(ind[np.sum(Tmutations,axis=(0,1,2))>0])
+                  
+                  
+                  
+                  
+                  
+                  L=set(ind)
+                  
+                  if t==(52*60+36):             
+                     self.TabMutations45=TabMutations[:,:,:,list(L)]
+                     self.CrSizes45=np.sum(self.TabMutations45,axis=(0,1,2))+self.crypt_size                                  
+                     self.TabDifferentiated45=TabDifferentiated[:,list(L)]
+                     self.DiffCrSizes45=np.dot(2**np.arange(6),self.TabDifferentiated45)+(self.crypt_size)*(2**6-1)
+                     self.CrTot45=self.DiffCrSizes45+self.CrSizes45
+                     indCrypt=(np.where(np.array(self.CrTot45)>1.25*10**8))[0]
+                     #Colonoscopy=np.random.binomial(1,0.4)
+                     if True  and  len(indCrypt)>0:
+                        #print(TabMutations[:,:,:,(ind[indCrypt])])
+                        TabMutations[:,:,:,(ind[indCrypt])]=0
+                     self.Type145=self.Type1
+                     self.Type245=self.Type2
+                  
+                  if t==(52*62+36):             
+                     self.TabMutations65=TabMutations[:,:,:,list(L)]
+                     self.CrSizes65=np.sum(self.TabMutations65,axis=(0,1,2))+self.crypt_size                                  
+                     self.TabDifferentiated65=TabDifferentiated[:,list(L)]
+                     self.DiffCrSizes65=np.dot(2**np.arange(6),self.TabDifferentiated65)+(self.crypt_size)*(2**6-1)
+                     self.CrTot65=self.DiffCrSizes65+self.CrSizes65
+                     indCrypt=(np.where(np.array(self.CrTot65)>1.25*10**8))[0]
+                     Colonoscopy=np.random.binomial(1,0.58)
+                     
+                     if Colonoscopy and self.col and False:
+                         self.colhapp=1
+                     if len(indCrypt)>0 and Colonoscopy and self.col and False:
+                        #print(TabMutations[:,:,:,(ind[indCrypt])])
+                        TabMutations[:,:,:,(ind[indCrypt])]=0
+                        
+                     self.Type165=self.Type1
+                     self.Type265=self.Type2
+                     
+                  if t==(52*50+36):             
+                     self.TabMutations50=TabMutations[:,:,:,list(L)]
+                     self.CrSizes50=np.sum(self.TabMutations50,axis=(0,1,2))+self.crypt_size                                  
+                     self.TabDifferentiated50=TabDifferentiated[:,list(L)]
+                     self.DiffCrSizes50=np.dot(2**np.arange(6),self.TabDifferentiated50)+(self.crypt_size)*(2**6-1)
+                     self.CrTot50=self.DiffCrSizes50+self.CrSizes50
+                     indCrypt=(np.where(np.array(self.CrTot50)>1.25*10**8))[0]
+                     self.Type150=self.Type1
+                     self.Type250=self.Type2
+                     if False  and len(indCrypt)>0:
+                         #print(TabMutations[:,:,:,(ind[indCrypt])])
+                         TabMutations[:,:,:,(ind[indCrypt])]=0
+                     
+                     
+                  
+                  if t==(52*70+36):             
+                     self.TabMutations70=TabMutations[:,:,:,list(L)]
+                     self.CrSizes70=np.sum(self.TabMutations70,axis=(0,1,2))+self.crypt_size                                  
+                     self.TabDifferentiated70=TabDifferentiated[:,list(L)]
+                     self.DiffCrSizes70=np.dot(2**np.arange(6),self.TabDifferentiated70)+(self.crypt_size)*(2**6-1)
+                     self.CrTot70=self.DiffCrSizes70+self.CrSizes70
+                     indCrypt=(np.where(np.array(self.CrTot70)>1.25*10**8))[0]
+                     if True  and len(indCrypt)>0:
+                        #print(TabMutations[:,:,:,(ind[indCrypt])])
+                         TabMutations[:,:,:,(ind[indCrypt])]=0
+                     self.Type170=self.Type1
+                     self.Type270=self.Type2
+                
+                  
+                  
+                  
+                  
+              if self.Diagnostic:
+                      self.TabMutations=TabMutations[:,:,:,list(L)]
+                      self.CrSizes=np.sum(self.TabMutations,axis=(0,1,2))+self.crypt_size                                  
+                      self.TabDifferentiated=TabDifferentiated[:,list(L)]
+                      self.DiffCrSizes=np.dot(2**np.arange(6),self.TabDifferentiated)+(self.crypt_size)*(2**6-1)
+                      self.CrTot=self.DiffCrSizes+self.CrSizes
+                      self.TabHistory=TabHistory[:,list(L)]
+                      
+                      self.Plastic=np.logical_and(self.CrTot>1.25*10**8,self.CrTot/self.CrSizes<5000)
+                      self.status=np.any(np.logical_and(self.CancerTest(self.TabMutations)[1],self.Plastic))
+              t +=self.delta
+              self.age=t
+                  
+                      #self.status=(self.status) or (self.CrTot.max()>10**11)
+                      
+                  #print(np.nonzero(np.sum(Tmutations,axis=(0,1,2)))[0].shape)
+                
+
+                  
+                  
+                  
+                
+                  
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+                  
+                
+                     
+              
+                
+           
+                  
+        self.Diagnostic,self.Type3,self.Type2,self.Type1=self.CancerTest(TabMutations[:,:,:,list(L)])
+        
+        
+        self.TabMutations=TabMutations[:,:,:,list(L)]
+        self.CrSizes=np.sum(self.TabMutations,axis=(0,1,2))+self.crypt_size                                  
+        self.TabDifferentiated=TabDifferentiated[:,list(L)]
+        self.DiffCrSizes=np.dot(2**np.arange(6),self.TabDifferentiated)+(self.crypt_size)*(2**6-1)
+        self.CrTot=self.DiffCrSizes+self.CrSizes
+        self.TabHistory=TabHistory[:,list(L)]                 
+        self.L=L
+        #print (np.min(self.CrTot/self.CrSizes))
+              
+        if self.Diagnostic:
+                      self.TabMutations=TabMutations[:,:,:,list(L)]
+                      self.CrSizes=np.sum(self.TabMutations,axis=(0,1,2))+self.crypt_size                                  
+                      self.TabDifferentiated=TabDifferentiated[:,list(L)]
+                      self.DiffCrSizes=np.dot(2**np.arange(6),self.TabDifferentiated)+(self.crypt_size)*(2**6-1)
+                      self.CrTot=self.DiffCrSizes+self.CrSizes
+                      self.TabHistory=TabHistory[:,list(L)]
+                      
+                      self.Plastic=np.logical_and(self.CrTot>1.25*10**8,self.CrTot/self.CrSizes<5000)
+                      self.status=np.any(np.logical_and(self.CancerTest(self.TabMutations)[1],self.Plastic))
+                  
+        
+        
+#        self.Plastic=np.logical_and(self.CrTot>2*10**8,self.CrTot/self.CrSizes<10)
+        self.ExitTime=t
+        print (time.time()-Time ) 
+        print(t)
+#        if (self.CrSizes.shape[0])>0:
+#            print (self.CancerTest(self.TabMutations)[0])
+#            print ((self.CrSizes).max())
+#        self.status=np.any(np.logical_and(self.CancerTest(self.TabMutations)[1],self.Plastic))
+        #return L
+ExitTimes=list()
+L=list() 
+C=list() 
+C1=list()
+C45=list()
+C65=list()
+C50=list()
+C70=list()
+
+
+
+
+
+Type145=list()
+Type245=list()
+
+
+Type165=list()
+Type265=list()
+
+
+
+Type150=list()
+Type250=list()
+
+
+
+
+Type170=list()
+Type270=list()
+
+
+Type1=list()
+Type2=list()
+
+
+
+TH=list()
+TM=list()
+Ratio=list()
+NPolyps1=list()
+NPolyps145=list()
+NPolyps2=list()
+NPolyps245=list()
+NPolyps3=list()
+NPolyps345=list()
+Colhapp=list()
+
+
+
+
+
+
+
+
+
+#Done #Checked
+
+#X_Star123=[ 1.002  ,        1.2    ,     1.22460554 , 1.11921576 , 2.03411581  ,1.83136433,
+ # 1.52046482]
+
+# 1 -> gp 1 gp2 gp2 ; 1-> gp1 gp2 gp1 16-> gp 1 gp1 gp2
+
+
+#Done #Checked
+
+#X_Star132=[ 1.03     ,     1.30964407,  1.78118668 , 0.4       ,  2.58081304  ,1.56276176,
+#  1.4470213 ]
+
+# 2 -> group1 group2 group1 1-> gp1 gp2 gp2 12-> gp1 gp1 gp2
+
+
+
+
+#Done #Checked
+
+#X_Star213=[ 1.01393599 , 1.23827834 , 1.50694946 , 1.25662646 , 0.70129281 , 0.9838521,
+# 1.53857839] 0.017
+
+# 1-> gp1 gp2 gp2  20 -> gp1 
+            
+            
+            
+            
+            
+#Done   # Checked       
+            
+#X_Star231=[ 1.09    ,      1.2    ,     2.    ,      1.44103079 , 0.97336333 , 1.91292988 ,
+ # 1.34454887] 0.009
+
+# 5-> gp1 gp1 gp2 2->gp1 gp2 gp2 7->gp2 gp1 gp2
+
+            
+            
+#Done  #Checked        
+
+#X_Star312=[ [ 1.04953762 , 1.46890205 , 0.3   ,      0.4    ,     2.54505949  ,1.90741193,
+# 1.62169359]] 0.022
+
+# 4-> gp2 gp2 gp3  14->gp2 gp2 gp1
+
+            
+            
+#Done #Checked
+
+#X_Star321=np.array([ 1. , 1.20269377  ,1.7759515 ,  1.25814219 , 0.20915281 , 0.93730077,
+#  1.50042693]) 0.026
+
+# 15 -> gp1 gp1 gp2  3-> gp1 gp2 gp1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#Scenarios for DeltaTimings: From smallest to largest for example [1,3,2] means first time shorter than third time shorter than second time.
+#Scen=np.array([3,2,1])
+#
+#
+#
+#
+#
+#
+##Preparing space filling
+#
+#
+#LowerBounds=np.tile(np.array([1.0009,1.09,0.0009/0.03,0.19]),(100,1))
+#
+#Lengths=np.tile(np.array([1.81,5.01,0.5/0.03,2.01])-np.array([1.0009,1.09,0.0009/0.03,0.19]),(100,1))
+#
+#LatinHyper=LowerBounds+Lengths*pyl.lhs(4,samples=100)
+#
+##Number of iterations for fitting the parameters.
+#Nindividuals0=1000
+#
+##[ 1.          1.14943737  1.19202268  1.          2.66616078  1.51636497
+##  1.57142857]
+#
+#cases=0 
+#kernel=1**2*kn.Matern(length_scale=np.ones(4),nu=1.5)
+#
+#datasets0=np.zeros((Nindividuals0,10))
+#datasets0[0,:]=np.array([1.001,1.1,0.001/0.03,0.2,-1,1,-1,-1,-1,-1])
+#datasets0[1,:]=np.array([1.8,5,0.5/0.03,2,1,-1,1,1,1,1])
+#Const=np.array([0.8 ,0.99,0.025,0.4,0.02,0.03])
+#x_Star=[np.array([1.1     ,    1.31      ,    0.21  ,2]),1]
+#x_explore=np.zeros(4)
+#x_explore[0]=np.random.uniform(1.001,1.8)
+#x_explore[1]=np.random.uniform(1.1e-3,5e-3)*1e3
+#x_explore[3]=np.random.uniform(0.2,2)  
+#x_Explore=[x_explore,1]
+#x_Star=x_Explore
+#datasets0[2:,8]=-np.ones(Nindividuals0-2)
+#datasets0[2:,9]=-np.ones(Nindividuals0-2)
+#
+#
+#
+#
+#
+#
+#
+#
+#for  i in np.arange(2,Nindividuals0):
+#    
+#       if i<100:
+#          datasets0[i,0:4]=LatinHyper[i,:]
+#          
+#       
+#       else:
+#         
+#        if np.mod(i,2)==0:
+#          datasets0[i,0]=x_Explore[0][0]
+#          datasets0[i,1]=x_Explore[0][1]
+#          datasets0[i,2]=x_Explore[0][2]
+#          datasets0[i,3]=x_Explore[0][3]
+#           
+#
+#        else:
+#          datasets0[i,0]=x_Star[0][0]
+#          datasets0[i,1]=x_Star[0][1]
+#          datasets0[i,2]=x_Star[0][2]
+#          datasets0[i,3]=x_Star[0][3]
+#          
+#       
+#           
+#       print(i)
+#       t1=tissue(capp=datasets0[i,0],psym=0.0525,psymdiff=0.1-0.0525,deltapsym=datasets0[i,1]*1e-3,PowerRate=datasets0[i,3],TargetDiv=datasets0[i,2]*0.03,mult=1,powersize=9,col=1)    
+#       t1.TestCancerClonal()
+#       datasets0[i,4]=2*int(t1.CrTot.max()>(1.25*10**8))-1
+#       datasets0[i,5]=2*int(t1.CrTot.max()<(10**10))-1
+#       datasets0[i,6]=2*int(t1.status)-1
+#       datasets0[i,7]=2*int(t1.CrTot45.max()>(1.25*10**8))-1 
+#       
+#                
+#                
+#                
+#        
+#       print ("the minimum ratio is {0}: ".format((t1.CrTot[np.where(t1.CrTot==max(t1.CrTot))]/t1.CrSizes[np.where(t1.CrTot==max(t1.CrTot))])))
+#       L.append(t1.status)
+#       C.append((t1.CrTot).max())
+#       print("The size of the largest crypt is {0}: ".format(np.log((t1.CrTot).max())/np.log(10)))
+#       C1.append(t1.CrSizes.max())
+#       print("The size of the largest crypt at 45 is {0}: ".format(np.log((t1.CrTot45).max())/np.log(10)))
+#       C45.append(t1.CrTot45.max())
+#       if t1.status:
+#          
+#          print("CASE number:{0}".format(cases+1))
+#          cases +=1
+#          HittingTimes=np.where(np.logical_and(t1.Type3,t1.Plastic))[0]
+#          TH.append(t1.TabHistory[:,HittingTimes])
+#          TM.append(t1.TabMutations[:,:,:,HittingTimes])  
+#          THistory=t1.TabHistory[:,HittingTimes]
+#          THistory=THistory[:,0]
+#          DeltaTiming=np.array([THistory[0],THistory[1]-THistory[0],THistory[2]-THistory[1]])
+#          datasets0[i,8]=2*int(((t1.TabMutations[:,:,:,HittingTimes])[1,1,0][0]) > ((t1.TabMutations[:,:,:,HittingTimes])[2,0,0][0]))-1
+#          datasets0[i,9]=2*((DeltaTiming[Scen[0]-1]<DeltaTiming[Scen[1]-1]) and (DeltaTiming[Scen[1]-1]<DeltaTiming[Scen[2]-1]))-1
+#       X0=np.copy(datasets0[0:(i+1),0:4])
+#       Y0=np.copy(datasets0[0:(i+1),4:10])
+#       g1=gp.GaussianProcessClassifier(kernel)
+#       g1.fit(X0,Y0[:,0])
+#       Cs1=np.sqrt(np.exp(g1.kernel_.theta[0]))
+#       l1=(np.exp(g1.kernel_.theta[1]))
+#       g2=gp.GaussianProcessClassifier(kernel)
+#       g2.fit(X0,Y0[:,1])
+#       Cs2=np.sqrt(np.exp(g2.kernel_.theta[0]))
+#       l2=(np.exp(g2.kernel_.theta[1]))
+#       g3=gp.GaussianProcessClassifier(kernel)
+#       g3.fit(X0,Y0[:,2])
+#       Cs3=np.sqrt(np.exp(g3.kernel_.theta[0]))
+#       l3=(np.exp(g3.kernel_.theta[1]))
+#       g4=gp.GaussianProcessClassifier(kernel)
+#       g4.fit(X0,Y0[:,3])
+#       Cs4=np.sqrt(np.exp(g4.kernel_.theta[0]))
+#       l4=(np.exp(g4.kernel_.theta[1]))
+#       g5=gp.GaussianProcessClassifier(kernel)
+#       g5.fit(X0,Y0[:,4])
+#       Cs5=np.sqrt(np.exp(g5.kernel_.theta[0]))
+#       l5=(np.exp(g5.kernel_.theta[1])) 
+#       g6=gp.GaussianProcessClassifier(kernel)
+#       g6.fit(X0,Y0[:,5])
+#       Cs6=np.sqrt(np.exp(g6.kernel_.theta[0]))
+#       l6=(np.exp(g5.kernel_.theta[1]))
+#       
+#       def Hellinger_Squared(p,q):
+#           return (np.linalg.norm(np.sqrt(p)-np.sqrt(q)))**2
+#       
+#       def objective_exploration(x,*kwargs):  
+#           eps=10**(-5)
+#           return min(0,-sp.stats.entropy([g1.predict_proba(x)[0][1]+eps,1-g1.predict_proba(x)[0][1]-eps])-sp.stats.entropy([g2.predict_proba(x)[0][1]+eps,1-g2.predict_proba(x)[0][1]-eps])-sp.stats.entropy([g3.predict_proba(x)[0][1]+eps,1-g3.predict_proba(x)[0][1]-eps])-sp.stats.entropy([g4.predict_proba(x)[0][1]+eps,1-g4.predict_proba(x)[0][1]-eps]))
+#       
+#       def objective(x,*kwargs):
+#           
+#           y1=g1.predict_proba(x)[0][1]
+#           y2=g2.predict_proba(x)[0][1]
+#           y3=g3.predict_proba(x)[0][1]
+#           y4=g4.predict_proba(x)[0][1]
+#           y5=g5.predict_proba(x)[0][1]
+#           y6=g6.predict_proba(x)[0][1]    
+#           #p=np.array([y1,y2,y3,y4,y5,y6])
+#           #d=Hellinger_Squared(p,Const)    
+#           return 1/(Const[0]**1)*(Const[0]-y1)**2+1/(Const[1]**1)*(Const[1]-y2)**2+1/(Const[2]**1)*(Const[2]-y3)**2+1/(Const[3]**1)*(Const[3]-y4)**2+1/((1-Const[0])**2)*(Const[0]-y1)**2+1/((1-Const[1])**1)*(Const[1]-y2)**2+1/((1-Const[2])**1)*(Const[2]-y3)**2+1/((1-Const[3])**1)*(Const[3]-y4)**2
+#           #d1=min(sp.stats.entropy([Const[0],1-Const[0]],[y1,1-y1])+sp.stats.entropy([Const[1],1-Const[1]],[y2,1-y2])+sp.stats.entropy([Const[2],1-Const[2]],[y3,1-y3])+sp.stats.entropy([Const[3],1-Const[3]],[y4,1-y4])+sp.stats.entropy([Const[4],1-Const[4]],[y5,1-y5])+sp.stats.entropy([Const[5],1-Const[5]],[y6,1-y6]),1000)
+#           #d2=min(sp.stats.entropy([y1,1-y1],[Const[0],1-Const[0]])+sp.stats.entropy([y2,1-y2],[Const[1],1-Const[1]])+sp.stats.entropy([y3,1-y3],[Const[2],1-Const[2]])+sp.stats.entropy([y4,1-y4],[Const[3],1-Const[3]])+sp.stats.entropy([y5,1-y5],[Const[4],1-Const[4]])+sp.stats.entropy([y6,1-y6],[Const[5],1-Const[5]]),1000)
+#           #return d
+#           #np.abs(Const[0]-y1)+np.abs(Const[1]-y2)+np.abs(Const[2]-y3)+np.abs(Const[3]-y4)+np.abs(Const[4]-y5)+np.abs(Const[5]-y6)
+#       x_Star=sp.optimize.fmin_tnc(objective,9/10*np.copy(x_Star[0])+1/10*np.copy(x_Explore[0]),approx_grad=True,bounds=[(1.001,1.8),(1.1,5),(0.001/0.03,0.5/0.03),(0.2,2)],epsilon=1e-5)
+#       InitialPoint=np.zeros(7)
+#       InitialPoint[0]=np.random.uniform(0.0501,0.0501)/0.0501
+#       InitialPoint[1]=np.random.uniform(1.001,1.8)
+#       InitialPoint[2]=np.random.uniform(1.1e-3,5e-3)*1e3
+#       InitialPoint[3]=np.random.uniform(0.5,0.5)/0.5
+#       InitialPoint[4]=np.random.uniform(0.001,0.5)/0.03
+#       InitialPoint[5]=np.random.uniform(0.2,2)  
+#       InitialPoint[6]=np.random.uniform(11,11)/7
+#       x_Explore=sp.optimize.fmin_tnc(objective_exploration,InitialPoint[np.array([1,2,4,5])],approx_grad=True,bounds=[(1.001,1.8),(1.1,5),(0.001/0.03,0.5/0.03),(0.2,2)],epsilon=1e-3)
+#
+#       print("The parameters are: {0}".format(x_Star[0]))
+#       print("The predicted probability for constraint 1 is {0}.\n The predicted probability for constraint 2 is {1} \n.The predicted probability for constraint 3 is {2} \n.The predicted probability for constraint 4 is {3} \n.The predicted probability for constraint 5 is {4} \n.".format(g1.predict_proba(x_Star[0]),g2.predict_proba(x_Star[0]),g3.predict_proba(x_Star[0]),g4.predict_proba(x_Star[0]),g6.predict_proba(x_Star[0])))
+#       
+#       print("The parameters for exp are: {0}".format(x_Explore[0]))
+#       print("The predicted probability for exp  constraint 1 is {0}.\n The predicted probability for constraint 2 is {1} \n.The predicted probability for constraint 3 is {2} \n.The predicted probability for constraint 4 is {3} \n.The predicted probability for constraint 5 is {4} \n.".format(g1.predict_proba(x_Explore[0]),g2.predict_proba(x_Explore[0]),g3.predict_proba(x_Explore[0]),g4.predict_proba(x_Explore[0]),g6.predict_proba(x_Explore[0])))
+#       
+#       
+#print("The parameters are: {0}".format(x_Star[0]))
+#print("The predicted probability for constraint 1 is {0}.\n The predicted probability for constraint 2 is {1} \n.The predicted probability for constraint 3 is {2} \n.The predicted probability for constraint 4 is {3} \n.The predicted probability for constraint 5 is {4} \n.".format(g1.predict_proba(x_Star[0]),g2.predict_proba(x_Star[0]),g3.predict_proba(x_Star[0]),g4.predict_proba(x_Star[0]),g6.predict_proba(x_Star[0])))
+##   
+########
+####
+######
+####
+####
+##
+##
+
+#
+##
+#
+
+
+
+ 
+###
+###
+####
+###
+##
+##
+##
+##
+##
+##
+##
+##
+##
+##
+#
+
+
+
+
+#
+
+#XSTAR=np.array([ 1.15376108 , 1.2      ,   1.5       ,  1.8     ,    1.043968  ,  0.43877002,
+#  1.30498665])
+
+    
+    
+#XSTAR=np.array([ 1. , 1.20269377  ,1.7759515 ,  1.25814219 , 0.20915281 , 0.93730077,
+#  10] )    
+#    
+#    
+#    
+#XSTAR=np.array([ 1.20121987  ,1.51684216 , 0.16666667 , 1.35239762] )  
+#XSTAR=np.array([ 1.23321987  ,1.5144216 , 0.16666667 , 1.35239762] )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+#XSTAR=np.array([ 1.39918994 , 1.59970798 , 0.59128437 , 0.67565317])
+##XSTAR=np.array([ 1.59918994 , 1.29970798 , 0.59128437 , 1])
+#XSTAR=np.array([ 1.3246107  , 1.42190785 , 1.44656096 , 1.98408015])
+#XSTAR=np.array( [ 1.31    ,   3.5       ,   1.34735391  , 1.        ])
+#XSTAR=np.array( [ 1.51    ,   3.9       ,   1.34735391  , 1.        ])
+#XSTAR=np.array([ 1.03149463 , 1.47289952 , 2.88270948 ,  0.91258153])
+##
+##
+##
+##
+#######    
+#######
+cases=0
+TH_oneHit=list()
+TH_twoHits=list()  
+Label_oneHit=list()
+Label_twoHits=list()
+#####XSTAR=np.array([ 1.3   ,      2.46680519 , 0.42973476 , 1.        ])
+#####XSTAR=np.array([ 1.18307123 , 4.4956539 , 0.61260726 , 1.        ])
+####XSTAR=np.array([ 1.1707123 , 4.7856539 , 0.61260726 , 0.9        ])
+###XSTAR=np.array([ 1.3118499  ,2.3754923  , 0.45813073  ,1.2135515 ])
+###
+#XSTAR=np.array([ 1.15   ,     1.74171553 , 2.33177602 , 0.86858696])
+#XSTAR=np.array([ 1.1     ,    1.80412287 , 3.33333333 , 0.5       ])
+#XSTAR=np.array([ 1.19     ,    1.7012287 , 1.33333333 , 0.5       ])##  
+#XSTAR=np.array([ 1.19     ,    1.5012287 , 2.67333333 , 0.5       ])
+#XSTAR=np.array([ 1.2411598  , 1.87999456 , 1.69594339 , 0.33127774])
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#XSTAR=np.array([ 1.19252677 , 1.54799723 , 3.95441462 , 0.33519341])
+#XSTAR=np.array([ 1.30252677 , 1.80799723 , 3.95441462 , 0.25519341]) 
+#XSTAR=np.array([ 1.30252677 , 1.95799723 , 3.95441462 , 0.205]) 
+#XSTAR=np.array([ 1.012794853 , 2.01     ,     3.848502 ,  0.56173119])
+#XSTAR=np.array([ 1.14794853 , 2.12     ,     5.0148502 ,  0.41173119])
+#XSTAR=np.array([ 1.14794853 , 2.14     ,     9.0148502 ,  0.41173119])
+#XSTAR=np.array([ 1.14794853 , 0*2.34     ,     5.0148502 ,  0.41173119])
+#
+#
+#
+#######
+########
+########
+########
+########
+########
+#######
+#XSTAR=[  1.1815155 , 1.29    ,     2.26126399 , 0.66882078]
+#XSTAR=np.array([ 1.08546001 , 2.      ,    4.95748465 , 0.41256488])
+##XSTAR=np.array([ 1.08546001 , 2.11      ,    5.95748465 , 0.41256488])
+##XSTAR=np.array([ 1.1257605 , 1.50947726 , 2.24069601 , 0.51064333])
+#XSTAR=np.array([ 1.09279089 , 1.88753394 , 4.65174042 , 0.2546865 ])
+#XSTAR=np.array([ 1.03149463 , 1.47289952 , 2.88270948 , 0.91258153])
+#XSTAR=np.array([ 1.07149463 , 1.47289952 , 2.88270948 , 0.91258153])
+#XSTAR=np.array([ 1.06208508 , 1.62757743 , 2.990467 ,   0.88219748])
+#XSTAR=np.array([ 1.05352661 , 1.79021687 , 3.0869349 ,  0.67272836])
+#XSTAR=np.array([ 1.05352661 , 1.96021687 , 3.0869349 ,  0.47272836])
+#XSTAR=np.array([ 1.01546001 , 2.11      ,    3.95748465 , 0.41256488])
+#XSTAR=np.array([ 1.02546001 , 2.12      ,    3.95748465 , 0.41256488])
+#XSTAR=np.array([ 1.12546001 , 2.12      ,    3.95748465 , 0.51256488])
+#XSTAR=np.array([ 1.06513811 , 2.80409828 , 0.97789048 , 0.2854079 ])
+#XSTAR=np.array([ 1.05813811 , 2.8879828 , 0.97789048 , 0.2704079 ])
+#
+#
+##
+##
+##
+##
+##
+###
+#XSTAR=np.array([ 1.07800701 , 1.66040454 , 1.41800254 , 0.54595739])
+#XSTAR=np.array([ 1.0007800701 , 0.26040454 , 1.41800254 , 0.54595739])
+#XSTAR=np.array([ 1.0065230    ,    1.17654206  , 2.4194273  , 0.76737695])
+#XSTAR=np.array([ 1.0071230    ,    1.19054206  , 2.4194273  , 0.70737695])
+#XSTAR=np.array([ 1.01     ,   1.36948267 , 7.1    ,     0.67983089 ])
+#XSTAR=np.array([ 1.001     ,  1.36518512 , 3.91489662 , 0.88805349])
+#XSTAR=np.array([ 1.0071230    ,    1.3294206  , 2.4194273  , 0.58737695])
+#XSTAR=np.array([ 1.001034    ,   1.2126093  , 6.520495134 , 0.7259945])
+#XSTAR=np.array([ 1.08839186 , 1.20041648 , 7.15335047 , 0.75003082])
+#XSTAR=np.array([ 1.18418744,  1.47384599 , 6.08770694  ,1.2964883 ])
+
+
+#XSTAR=np.array([ 1.01529959 , 1.51617529 , 3.52033527 , 0.57785891])
+#XSTAR=np.array([  1.10149855  , 1.25325252 , 10.24535396  , 1.7721808 ])
+#XSTAR=np.array([ 1.01112228 , 2.08467761 , 2.99991666 , 0.29777237])
+#XSTAR=np.array([  1.00272858  , 1.21688992 , 11.35971334 ,  2.        ])
+#XSTAR=np.array( [  1.05299807 ,  1.38627959 , 11.2054742  ,  0.8845916 ])
+#XSTAR=np.array([  1.14043953 ,  1.3540298  , 12.47453182 ,  0.82657907])
+#XSTAR=np.array([ 1.22738933 , 1.29946704 , 7.84453613 ,  1.991        ])
+#XSTAR=np.array([  1.16323385  , 2.81920851 , 10.14058461  , 0.35017657])
+#XSTAR=np.array([  1.36555829  , 1.3368825  , 10.37307922 ,  1.54758523])
+#XSTAR=np.array([ 1.21981942 , 2.2599593 ,  6.86903874  , 0.63529474])
+
+
+
+
+
+
+
+
+
+XSTAR=np.array([  1.35595122  , 1.86287641 , 13.78221431 ,  0.46843411])
+#########
+############
+Nindividuals=200
+cases=0
+#
+for i in range(Nindividuals):
+    print(i)
+    t1=tissue(capp=XSTAR[0],psym=0.0525,psymdiff=0.1-0.0525,deltapsym=XSTAR[1]*1e-3,PowerRate=XSTAR[3],TargetDiv=XSTAR[2]*0.03,mult=1,powersize=9,col=0)    
+    t1.TestCancerClonal()
+    ExitTimes.append(t1.ExitTime)
+    print ("the minimum ratio is : {0} ".format(t1.CrTot[np.where(t1.CrSizes==max(t1.CrSizes))]/t1.CrSizes[np.where(t1.CrSizes==max(t1.CrSizes))]))
+    Ratio.append(t1.CrTot[np.where(t1.CrSizes==max(t1.CrSizes))]/t1.CrSizes[np.where(t1.CrSizes==max(t1.CrSizes))])
+    L.append(t1.status)
+    C.append((t1.CrTot).max())
+    print("The size of the largest crypt is : {0} ".format(np.log((t1.CrTot).max())/np.log(10)))
+    C1.append(t1.CrSizes.max())
+    print("The size of the largest crypt at 50 is : {0} ".format(np.log((t1.CrTot45).max())/np.log(10)))
+    C45.append(t1.CrTot45.max())
+    C65.append(t1.CrTot65.max())
+    
+    C50.append(t1.CrTot50.max())
+    C70.append(t1.CrTot70.max())
+    
+    Type1.append(np.any(t1.Type1))
+    Type2.append(np.any(t1.Type2))
+    
+    
+    Type145.append(np.any(t1.Type145))
+    Type245.append(np.any(t1.Type245))
+    
+    Type150.append(np.any(t1.Type150))
+    Type250.append(np.any(t1.Type250))
+    
+    Type165.append(np.any(t1.Type165))
+    Type265.append(np.any(t1.Type265))
+    
+    Type170.append(np.any(t1.Type170))
+    Type270.append(np.any(t1.Type270))
+    Colhapp.append(t1.colhapp)
+    
+    
+    NPolyps1.append(sum(t1.CrTot>1.25*10**8))
+    print("The number of polyps is {0}: ".format(sum(t1.CrTot>1.25*10**8)))
+    NPolyps145.append(sum(t1.CrTot45>1.25*10**8))
+    print("The number of polyps at age 50  is : {0} ".format(sum(t1.CrTot45>1.25*10**8)))
+    NPolyps2.append(sum(t1.CrTot>10**9))
+    print("The number of polyps is {0}: ".format(sum(t1.CrTot>10**9)))
+    NPolyps245.append(sum(t1.CrTot45>10**9))
+    print("The number of polyps at age 50  is : {0} ".format(sum(t1.CrTot45>10**9)))
+    NPolyps3.append(sum(t1.CrTot>3*10**9))
+    print("The number of polyps is {0}: ".format(sum(t1.CrTot>3*10**9)))
+    NPolyps345.append(sum(t1.CrTot45>3*10**9))
+    print("The number of polyps at age 50  is : {0} ".format(sum(t1.CrTot45>3*10**9)))
+    
+    
+    HittingTimes1=np.where(np.logical_and(t1.Type1,t1.CrTot>1.25*10**8))[0]
+    if HittingTimes1 !=[]:
+       TH_oneHit.append(t1.TabHistory[:,HittingTimes1][:,0])
+       Label_oneHit.append(int(t1.status))
+       
+       
+    HittingTimes2=np.where(np.logical_and(t1.Type2,t1.CrTot>1.25*10**8))[0]
+    if HittingTimes2 !=[]:
+       TH_twoHits.append(t1.TabHistory[:,HittingTimes2][:,0])
+       Label_twoHits.append(int(t1.status))
+    
+    
+    
+    if t1.status:
+          
+          print("CASE number:{0}".format(cases+1))
+          cases +=1
+          HittingTimes=np.where(np.logical_and(t1.Type3,t1.Plastic))[0]
+          TH.append(t1.TabHistory[:,HittingTimes])
+          TM.append(t1.TabMutations[:,:,:,HittingTimes]) 
+    del t1
+    
+#
+    
+print(TH)   
+#Ratio=np.array(Ratio)
+
+
+
+Times1=np.zeros(len(TH))
+Times2=np.zeros(len(TH))
+Times3=np.zeros(len(TH))
+
+
+
+for i in range(len(TH)):
+    Times1[i]=TH[i][0][0]/52
+    Times2[i]=(TH[i][1][0]-TH[i][0][0])/52
+    Times3[i]=(TH[i][2][0]-TH[i][1][0])/52
+#    
+#
+
+
+#
+#
+#
+for i in range(len(TH)):
+    print(TM[i][1,1,1])
+####
+#############
+#########
+#######
+######
+######
+######5-> gp2 gp2 1-> gp2 gp3
+######
+#####
+#####
+#####
+#####
+#####
+#####
+####
+####
+####
+####
+#####
+###
+#
+np.save('C321'+str((datetime.datetime.now())),C)
+np.save('C45321'+str((datetime.datetime.now())),C45)
+np.save('C65321'+str((datetime.datetime.now())),C65)
+np.save('C50321'+str((datetime.datetime.now())),C50)
+np.save('C70321'+str((datetime.datetime.now())),C70)
+np.save('ExitTimes6070'+str((datetime.datetime.now())),ExitTimes)
+np.save('Type1'+str((datetime.datetime.now())),Type1)
+np.save('Type2'+str((datetime.datetime.now())),Type2)
+
+np.save('Type145'+str((datetime.datetime.now())),Type145)
+np.save('Type245'+str((datetime.datetime.now())),Type245)
+
+np.save('Type165'+str((datetime.datetime.now())),Type165)
+np.save('Type265'+str((datetime.datetime.now())),Type265)
+
+
+np.save('Type150'+str((datetime.datetime.now())),Type150)
+np.save('Type250'+str((datetime.datetime.now())),Type250)
+
+
+np.save('Type170'+str((datetime.datetime.now())),Type170)
+np.save('Type270'+str((datetime.datetime.now())),Type270)
+
+
+
+
+np.save('Times1321'+str((datetime.datetime.now())),Times1)
+np.save('Times2321'+str((datetime.datetime.now())),Times2)
+np.save('Times3321'+str((datetime.datetime.now())),Times3)
+np.save('TH321'+str((datetime.datetime.now())),TH)
+np.save('Ratio321'+str((datetime.datetime.now())),Ratio)
+np.save('Ratio321'+str((datetime.datetime.now())),Ratio)
+np.save('TM321'+str((datetime.datetime.now())),TM)
+np.save('Colhapp'+str((datetime.datetime.now())),Colhapp)
+###
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#          
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#[ 1.1         1.30086594  0.29963551  2.        ]
+
+#[ 1.14158859  1.31330595  0.16666667  1.99987017]   
+ 
+#[ 1.17712559  1.31615075  0.16666667  2.        ]
+
+#[ 1.1         1.41036179  0.16841541  1.66458125]
+
+#[ 1.1905768   1.52854422  0.16666667  1.36935198]
+
+
+#[ 1.17722616  1.51661392  0.16666667  1.3887164 ]
+
+
+# [ 1.18449666  1.53774963  0.16666667  1.33878823]      
+
+                  
+# [ 1.18319191  1.54031174  0.16666667  1.33221049]                 
+                
+              
+# [ 1.19505643  1.5281337   0.16666667  1.35517707]                
+                         
+                         
+#[ 1.20121987  1.50684216  0.16666667  1.35239762]                         
+                         
+                         
+                     
+                      
+        
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+   
+
+    
+   
+        
+    
+   
+    
+    
+    
+
+            
+                
+            
+            
+        
+            
+        
+#[ 1.19257806  3.9292769   3.2751733   1.89276488]     
+        
+        
+    
+    
+        
+        
+        
+        
+        
+        
+        
+        
+    
+    
+                   
+               
+    
+    
+        
+        
+   
+    
+    
+    
+            
+            
+#[ 1.1         1.05254673  3.33333333  7.38583586]         
+        
+        
+
+        
+
+        
+        
+        
+        
+        
+        
+        
+        
+    
+    
+        
+#[ 1.001       2.01019257  0.36779679  0.83282049]                       
+                    
+                    
+                    
+                    
+
+                
+        
+        
+        
+#[ 1.14977152  1.9476714   1.30000007  1.15691423]   
+        
+        
+        
+        
+        
+        
+        
+#[ 1.18419415  3.34079257  2.97865159  0.67711078]        
+
+    
+    
+
+#[ 1.16060618  2.95856658  1.30610329  1.57306405]
+
+
+#21
+
+#The parameters are: [ 1.08228666  4.33953745  1.51503425  1.22984835]
+#[ 1.03869064  4.396206    0.55419048  0.94408322]
+#Expinteresting[ 1.00100071  4.55744505  0.03333333  0.58884109]
+#[ 1.14437168  4.223768    0.90123847  1.09788437]
+#The parameters are: [ 1.17755737  4.2200468   3.08158363  1.45684836]
+#[ 1.08777776  4.37441322  1.03251819  1.11373257]
+#[ 1.11634543  4.58044972  1.42014116  1.2049519 ]
+#[ 1.11354636  4.48043366  1.28412816  1.24262412]
+#[ 1.02492345  4.24573099  1.08954863  1.2110275 ]
+#[ 1.05700267  4.57498301  1.47434066  1.20135591]
+#[ 1.17210867  1.44341187  3.14383493  2.        ]
+
+
+#[ 1.05088677  1.48844749  3.19717396  1.68294569]
+#[ 1.07559664  1.46296641  3.2613661   2.        ]
+#[ 1.14738903  1.51259931  3.09959066  1.82185128]
+#[ 1.18494671  1.4503337   3.30384276  1.71353226]
+
+
+
+#[ 1.07185143  1.4958959   0.47236483  1.679414  ]
+#[ 1.09918994  1.49970798  0.59128437  1.67565317]
+
+
+
+#[ 1.14093447  1.37280328  3.05447267  1.3246468 ]
+#[ 1.17952314  1.3630373   3.03497397  1.4940841 ]
+#[ 1.2246107   1.32190785  1.44656096  1.98408015]
+#[ 1.22907717  4.07264323  1.54085068  1.86796792]
+
+
+
+
+
+ #[ 1.36909607  2.2673712   0.41457382  1.        ]
+ #[ 1.14329748  4.56798929  0.67151985  1.        ]
+ #[ 1.17307123  4.78956539  0.61260726  1.        ]
+ 
+ 
+ 
+ 
+ #[ 1.10162997  1.95424255  2.17380365  0.76001336]
+ #[ 1.1997504   1.91010517  2.21698952  0.81612333]
+ #[ 1.19764316  1.84289787  2.19221904  0.98489947]
+  #[ 1.19226075  1.93879939  2.76705057  0.76759496]
+  #[ 1.1         1.84524944  2.7281452   0.66912379]
+  #[ 1.1         1.76236336  2.64081316  0.94376231]
+  #[ 1.11640964  1.71282431  2.75007683  0.94219537]
+  #[ 1.1         2.0219141   2.75983064  0.5331257 ]
+   #[ 1.1         2.0219141   2.75983064  0.5331257 ]
+   #[ 1.17033504  1.93390734  1.61774012  0.72228081]
+   #[ 1.16496857  1.90515772  1.51288279  0.75038328]
+  #[ 1.1         1.84647079  3.21211252  0.85032242]
+  #[ 1.1         1.88911827  2.66079461  0.76174891]
+  #[ 1.1         1.86633029  2.55404919  0.81326345]
+  #[ 1.1         1.89582485  2.40686677  0.75169294]
+  #[ 1.1         1.85171553  2.33177602  0.86858696]
+  #[ 1.31928881  1.85170674  4.42838071  0.32426762]
+  # 1.28790248  1.87107351  1.91144336  0.32873713]
+  #[ 1.2411598   1.87999456  1.69594339  0.33127774]
+  #[ 1.37675778  2.24561136  4.92846553  0.45095062]
+  
+  
+  
+  
+  
+  
+  
+  #[ 1.22775546  1.53688963  4.47993476  0.34084657]
+  #[ 1.22119651  1.53394695  3.87629523  0.34682223]
+  #[ 1.21224337  1.49963446  4.2412488   0.36220564]
+  #[ 1.19252677  1.54799723  3.95441462  0.33519341]
+  
+  
+  
+ #[ 1.19519743  1.59365142  4.11140142  0.98870752]
+ #[ 1.13272822  1.91647507  4.06526791  0.67421186]
+ #[ 1.12395248  1.98630899  4.03224027  0.61935551]
+ #[ 1.1075742   2.          4.37993616  0.62453934]
+ #[ 1.11817855  1.99235338  4.25629976  0.61047162]
+ #[ 1.11189961  1.99205772  3.47663361  0.56950684]
+ #[ 1.11169461  2.          4.13969485  0.58641883]
+# [ 1.10910228  2.          4.99664944  0.6100267 ]
+#[ 1.11841628  2.          4.15659265  0.57289847]
+#[ 1.12794853  2.          4.1748502   0.56173119]
+#[ 1.14641889  2.          5.          0.57387467]
+#[ 1.40815155  1.1         2.26126399  0.66882078]
+#[ 1.27534668  2.          5.          0.39959757]
+#[ 1.122998    2.          5.          0.42067009]
+
+
+
+
+
+
+
+
+
+
+
+#[ 1.01982496  1.56368498  4.25362844  0.6412393 ]
+#[ 1.17286779  1.76178666  4.4267313   0.36902993]
+#[ 1.13002128  1.54625859  2.36428687  0.48202139]
+#[ 1.1277773   1.53414814  2.11502531  0.47062921]
+#[ 1.12845411  1.50729848  2.23322041  0.49215416]
+#[ 1.12540789  1.50867131  2.22412296  0.49682368]
+#[ 1.12045225  1.51394339  2.24532962  0.50804276]
+#[ 1.12157605  1.50947726  2.24069601  0.51064333]
+#[ 1.26232898  1.17513699  4.49313602  0.2       ]
+#[ 1.10836     1.59981454  3.70176775  0.414241  ]
+#[ 1.07132335  1.49152602  4.08690738  0.48376508]
+#[ 1.08279089  1.56753394  3.65174042  0.4346865 ]
+#[ 1.04024023  1.48831605  2.02453965  0.73687859]
+#[ 1.04307242  1.50907938  4.38374972  0.7150063 ]
+#[ 1.02702805  1.45908822  2.86452283  0.90441721]
+#[ 1.03149463  1.47289952  2.88270948  0.91258153]
+#[ 1.07881547  1.89592313  2.92167972  0.83026379]
+#[ 1.04558226  1.76493832  2.64889859  0.88884905]
+#[ 1.05352661  1.72021687  3.0869349   0.93272836]
+#[ 1.05960547  1.819378    2.99682458  0.82196783]
+#[ 1.06208508  1.67757743  2.990467    0.92219748]
+ #[ 1.06427811  1.82977916  4.10535897  0.78692767]
+ 
+ 
+ 
+ 
+ 
+ 
+ #[ 1.39822935  1.98829402  1.7273949   0.30991586]
+ #[ 1.40203811  1.99409828  0.97789048  0.2654079 ]
+ #[ 1.01        1.37732514  2.82620998  0.49073715]
+ #[ 1.03280301  1.2550748   4.60093277  0.59865516]
+ #[ 1.07800701  1.26040454  1.41800254  0.54595739]
+ #[ 1.05512033  1.12623823  0.84608156  0.64407815]
+ #[ 1.01        1.26875032  0.03333333  0.65884114]
+ #[ 1.01        1.27027812  0.03333333  0.66634203]
+ #[ 1.01        1.25812879  0.05139931  0.6899135 ]
+ #[ 1.01        1.21507489  0.5622629   0.76446946]
+ #[ 1.03465321  1.20626566  0.41894762  0.77385718]
+ #[ 1.01        1.19954206  2.4194273   0.76737695]
+ #[ 1.06074874  1.11435022  0.03333333  1.11690641]
+ #[ 1.01795792  1.1         0.48477978  1.79867745]
+ #[ 1.005       1.11276588  0.03333333  1.12659855]
+ #[ 1.005       1.12006442  0.03333333  1.202441  ]
+ # [ 1.03646876  1.1         0.03333333  1.61059954]
+ 
+ 
+ 
+ 
+ #[ 1.23313515  1.3493541   0.03333333  0.65494944]
+ #[ 1.005       3.29273686  4.60303578  0.62321416]
+ #[ 1.8         2.56218949  8.67982918  0.45192272]
+ 
+ 
+ 
+ 
+ #[  1.01767196   1.44688261  13.60606765   2.        ]
+# [  1.17791596   1.47614249  12.84861068   1.87870483]
+#[  1.0359676    1.48565214  15.04064278   1.86370665]
+#[ 1.13176554  1.32360809  7.26573565  0.68245921]
+
+
+
+#[  1.16407852   1.12153417  14.64199158   0.94377871]
+#[ 1.05937677  1.3464702   5.40963109  0.83632399]
+#[  1.00587936   1.57483368  10.07391997   0.70125166]
+
+
+
+
+
+
+
+
+
+#[ 1.02327448  1.35986254  1.18341845  0.85804952]
+#[ 1.06917156  1.21586515  2.33017061  0.9802615 ]
+#[ 1.08338144  1.20909961  2.11072808  0.94913016]
+#[ 1.001       1.40418512  0.71489662  0.90805349]
+#[ 1.001       1.40418512  0.71489662  0.90805349]
+#[ 1.001       1.41728745  1.97688593  0.66104201]
+#[ 1.001       1.31986879  3.94355905  0.65467825]
+
+
+#[ 1.001       1.12941944  4.07731171  0.70746482]
+#[ 1.1065162   1.1         2.02043516  1.43052063]
+
+
+
+
+
+#[ 1.001       1.33798365  0.03333333  0.70740914]
+
+
+#[ 1.001       1.34168572  8.92857139  0.61881646]
+#[ 1.001       1.33813162  8.78600231  0.63710715]
+#[ 1.001       1.20865641  8.00346076  0.7708551 ]
+# 1.001       1.41527883  8.75603069  0.5995982 ]
+#[ 1.001       1.2126093   7.95495134  0.77019945]
+
+
+
+
+
+
+
+#[ 1.001       1.1453844   7.49795001  0.82215576]
+#[  1.03066937   1.15017226  10.72405966   0.80701298]
+#[  1.001        1.23424679  11.06319524   0.71705366]
+#[  1.06421947   1.19984865  12.18613727   0.68143679]
+ #[ 1.0542155   1.1808042   8.20006134  0.77984266]
+ #[ 1.05839186  1.22641648  7.15335047  0.75003082]
+ 
+ 
+ 
+ 
+ 
+#[ 1.06506942  1.10189245  5.40554331  1.94033829]
+# [ 1.06958304  1.15691341  5.30980194  1.9011813 ]
+#[ 1.17213769  1.54705917  4.59817426  0.60281257]
+#[ 1.17213769  1.54705917  4.59817426  0.60281257]
+#[  1.21215681   1.10005695  11.83291612   1.27340311]
+#[ 1.29534996  1.21378891  8.14145643  1.2732776 ]
+# [ 1.29534996  1.21378891  8.14145643  1.2732776 ]
+#[ 1.00326822  1.19856252  5.95757605  1.99603267]
+#[ 1.02375811  1.14986404  5.80992168  2.        ]
+#[ 1.07875506  1.13475266  5.61911228  1.96095346]
+#[ 1.13001395  1.17059283  9.87436634  1.27027682]
+#[ 1.17835998  1.21285557  7.90639232  1.27658558]
+#[ 1.07816278  1.17214535  7.94074646  1.27635743]
+#[ 1.2871991   1.1813064   8.46199749  1.2693981 ]
+ #[ 1.07040531  1.15690326  9.81678984  1.60659037]
+ # [  1.10333376   1.1682029   10.15098895   1.51203569]
+ #[ 1.18418744  1.47384599  6.08770694  1.2964883 ]
+ #[ 1.26853471  1.30820582  7.2180351   1.28120222]
+ #[ 1.07999905  1.13788894  6.42265561  1.90743862]
+ # [1.00178248  1.18730563  3.44259689  1.41048096]
+ #[ 1.13172779  1.16262239  7.7222958   1.65259774]
+ #[ 1.08153791  1.16456986  7.00174059  1.65714153]
+ #[ 1.12452204  1.16528874  6.54644318  1.67243906]
+ #[ 1.12452204  1.16528874  6.54644318  1.67243906]
+ #[ 1.07640903  1.16580129  8.96769553  1.53183613]
+# [ 1.03594138  1.16504516  3.93854524  1.71281303]
+ #[ 1.06722111  1.17059057  3.65513105  1.6569193 ]
+ # [ 1.13458233  1.16482982  5.021161    1.71276448]
+ #[  1.34744149   1.13281359  10.4722846    1.93429474]
+# [  1.0059709    1.16072427  11.14355601   1.58104514]
+ #[  1.10149855   1.15325252  10.24535396   1.7721808 ]
+# [  1.0304546    1.16381373  10.55594241   1.52768409]
+ #[ 1.01885052  1.49144535  4.66370094  0.58654242]
+ #[ 1.001       1.65688891  4.09165101  0.46382566]
+ #[ 1.13748403  1.51614332  3.46012441  0.58187765]
+ 
+ 
+ 
+ #[ 1.01529959  1.51617529  3.52033527  0.57785891]
+ 
+ 
+ 
+ #[ 1.001       1.34691112  6.379085    1.59730405]
+ #[ 1.01112228  2.08467761  2.99991666  0.29777237]
+ 
+ 
+ 
+ 
+ #[  1.00457755   1.16792928  15.45562574   2.        ]
+ #[  1.001        1.19142019  15.99652036   2.        ]
+ #[  1.00287119   1.17650654  16.35098395   2.        ]
+ #[  1.03097564   1.17670143  16.66666667   2.        ]
+  #[  1.00572858   1.21688992  11.35971334   2.        ]
+  #[  1.001        1.36498921  11.91547939   1.53933604]
+  #[  1.03072108   1.281729    11.84150512   1.74846596]
+  #[  1.03072108   1.281729    11.84150512   1.74846596]
+  
+  
+  
+  #[ 1.2243356   1.43568678  4.96932812  0.90234278]
+  #[  1.18992073   1.40786174  12.22521996   0.78561885]
+  #[ 1.19118309  1.39412789  6.57454519  0.92899221]
+  #[ 1.19118309  1.39412789  6.57454519  0.92899221]
+  #[ 1.15164846  1.3890768   9.81174253  0.91060464]
+  #[ 1.18450154  1.37689965  6.92297992  0.91301962]
+  #[ 1.18720439  1.3535321   7.44294785  1.01047771]
+  #[ 1.19623568  1.37323446  8.75662765  0.94865229]
+  #[ 1.17687352  1.37731606  7.16950964  0.93091859]
+ #[ 1.17225761  1.39058213  6.33441926  0.89620286]
+ #[ 1.17681894  1.39507558  4.63966287  0.90587656]
+ #[  1.11299807   1.38627959  11.2054742    0.8845916 ]
+ #[  1.14043953   1.3540298   12.47453182   0.82657907]
+ #[ 1.06641993  1.36865663  6.83876657  1.14193868]
+ 
+ 
+ 
+ 
+ #[ 1.3635047   1.10649663  4.2773722   2.        ]
+ #[ 1.24605832  1.267816    2.75901929  2.        ]
+ #[ 1.25013924  1.6728899   8.34358544  0.54522094]
+ # [ 1.09821278  1.52592699  3.84071567  0.96355523]
+ #[ 1.11331733  1.96021039  8.7898898   0.46350666]
+ #[ 1.24176805  1.29012891  2.24816422  2.        ]
+  #[ 1.22738933  1.29946704  7.84453613  2.        ]
+  
+  
+#[ 1.25587963  2.52216084  7.86213317  0.38686173]
+#[ 1.26851951  2.43477421  8.64846246  0.40474655]
+#[ 1.17818081  2.65737355  8.52949112  0.36734329]
+#[  1.16323385   2.86720851  10.14058461   0.35017657]
+#[  1.03171864   2.80261635  16.36933706   0.29619855]
+#[  1.02575266   2.78743099  16.66666667   0.29895335]
+#[  1.001        2.9450153   14.80683963   0.29876628]
+#[  1.01821295   2.85103185  16.60184187   0.28571746]
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ##[  1.31795829   1.3438825   10.37307922   1.54758523]
+   ##[  1.38868388   1.10115275  10.72977122   1.20043962]
+  # [ 1.33991873  1.30388895  5.63570477  1.49714435]
+  #[ 1.34758649  1.93227742  8.04863665  0.690126  ]
+  #[ 1.36325308  1.99740541  4.15810166  0.71883041]
+  #[ 1.31224195  2.08188172  9.06222401  0.64719234]
+  #[ 1.23198166  2.26273816  6.61113063  0.63899509]
+  #[ 1.21981942  2.2599593   6.86903874  0.63529474]
+  #[ 1.32906628  2.23091977  5.30806522  0.4420101 ]
+  #[ 1.26082112  2.24830369  5.86660425  0.42757338]
+  #[ 1.28501028  1.9391498   7.47714436  0.50079506]
+  #[ 1.29232925  2.08080344  6.75541551  0.46397128]
+  #[ 1.21192818  2.03068221  6.68997518  0.47206085]
+  #[ 1.001       1.9100079   6.15493451  0.53011335]
+  #[ 1.0025856   2.01750538  5.59597636  0.50057086]
+  #[ 1.04776005  2.07500667  5.47849212  0.47419953]
+  #[ 1.07790213  2.1687839   4.99455143  0.45735006]
+  #[ 1.11129507  2.06434646  6.45803595  0.46791592]
+  #[  1.18675122   1.86287641  13.78221431   0.46843411]
+  #[ 1.01218935  2.21536401  7.19386135  0.43674281]
+  #[  1.001        2.68964046  12.85955215   0.34327741]
+  #[  1.14760804   2.46311083  10.15081241   0.38174653]
+  #[ 1.15664837  2.51486838  5.29148409  0.40516944]
+  #[ 1.25065682  2.28779386  4.49179536  0.4427217 ]
+  #[ 1.25987526  2.25870163  4.77430103  0.44835456]
+  #[ 1.24961982  2.30406633  5.39008385  0.43389205]
+  #[ 1.20805763  2.43414874  4.60133367  0.42929531]
+  #[ 1.20277815  2.44702703  4.73997373  0.42968143]
+  #[ 1.11866945  2.69134013  4.65741867  0.39636885]

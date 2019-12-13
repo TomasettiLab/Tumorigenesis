@@ -1,0 +1,23 @@
+Note that users no longer need to load the SLURM module. You may remove 'module
+load slurm' from your scripts. 
+Please read this resource guide to understand the above behavior:
+https://www.marcc.jhu.edu/getting-started/working-with-modules-on-centos-7/ 
+
+Lmod is automatically replacing "intel/18.0" with "gcc/5.5.0".
+
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) openmpi/3.1
+
+Note that users no longer need to load the SLURM module. You may remove 'module
+load slurm' from your scripts. 
+Please read this resource guide to understand the above behavior:
+https://www.marcc.jhu.edu/getting-started/working-with-modules-on-centos-7/ 
+Traceback (most recent call last):
+  File "Coarse_tau_leap_less_param_Lynch", line 1385, in <module>
+    np.save('TH321'+str((datetime.datetime.now())),TH)
+  File "/software/apps/anaconda/5.2/python/3.6/lib/python3.6/site-packages/numpy/lib/npyio.py", line 509, in save
+    arr = np.asanyarray(arr)
+  File "/software/apps/anaconda/5.2/python/3.6/lib/python3.6/site-packages/numpy/core/numeric.py", line 544, in asanyarray
+    return array(a, dtype, copy=False, order=order, subok=True)
+ValueError: could not broadcast input array from shape (3,1) into shape (3)

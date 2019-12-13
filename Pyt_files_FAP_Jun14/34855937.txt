@@ -1,0 +1,151 @@
+635.3066205978394
+2672.5
+the minimum ratio is : [14.78629986] 
+The size of the largest crypt is : 8.579030817399023 
+The size of the largest crypt at 50 is : 11.0 
+The number of polyps is 1362: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 2 
+CASE number:1
+716.8091571331024
+2899.0
+the minimum ratio is : [12.73925942] 
+The size of the largest crypt is : 8.63260029122734 
+The size of the largest crypt at 50 is : 8.618196111486986 
+The number of polyps is 2227: 
+The number of polyps at age 50  is : 2093 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+CASE number:2
+1306.07129073143
+4671.0
+the minimum ratio is : [6.41882832] 
+The size of the largest crypt is : 8.943632992711324 
+The size of the largest crypt at 50 is : 8.633292174017152 
+The number of polyps is 5713: 
+The number of polyps at age 50  is : 2096 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+CASE number:3
+730.3615617752075
+2941.5
+the minimum ratio is : [10.86675374] 
+The size of the largest crypt is : 8.713894095685502 
+The size of the largest crypt at 50 is : 8.67397553370642 
+The number of polyps is 2333: 
+The number of polyps at age 50  is : 2053 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+CASE number:4
+873.1469960212708
+3359.0
+the minimum ratio is : [9.15089004] 
+The size of the largest crypt is : 8.76761302433322 
+The size of the largest crypt at 50 is : 8.59646009534148 
+The number of polyps is 3495: 
+The number of polyps at age 50  is : 2031 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+CASE number:5
+809.5229346752167
+3193.0
+the minimum ratio is : [10.94085308] 
+The size of the largest crypt is : 8.681804164094022 
+The size of the largest crypt at 50 is : 8.604732870594509 
+The number of polyps is 2942: 
+The number of polyps at age 50  is : 1951 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+CASE number:6
+760.2695052623749
+3026.5
+the minimum ratio is : [11.64783262] 
+The size of the largest crypt is : 8.667210245223327 
+The size of the largest crypt at 50 is : 8.62854585572131 
+The number of polyps is 2619: 
+The number of polyps at age 50  is : 2104 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+CASE number:7
+806.299103975296
+3161.0
+the minimum ratio is : [8.79722902] 
+The size of the largest crypt is : 8.873837099764144 
+The size of the largest crypt at 50 is : 8.721192121222664 
+The number of polyps is 2979: 
+The number of polyps at age 50  is : 2050 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+CASE number:8
+657.6924319267273
+2723.5
+the minimum ratio is : [15.2360641] 
+The size of the largest crypt is : 8.554774510981568 
+The size of the largest crypt at 50 is : 11.0 
+The number of polyps is 1626: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 2 
+CASE number:9
+427.78308033943176
+2048.5
+the minimum ratio is : [26.20456403] 
+The size of the largest crypt is : 8.240141603941495 
+The size of the largest crypt at 50 is : 11.0 
+The number of polyps is 58: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 2 
+CASE number:10
+[array([[1046.5],
+       [1448. ],
+       [2672. ]]), array([[1049.5],
+       [1176. ],
+       [2896.5]]), array([[ 886.5],
+       [2008. ],
+       [4670.5]]), array([[1003.5],
+       [1424.5],
+       [2940. ]]), array([[1225.5],
+       [1835.5],
+       [3358.5]]), array([[ 817.5],
+       [2257.5],
+       [3192.5]]), array([[ 726.5],
+       [1362. ],
+       [3026. ]]), array([[ 906.5],
+       [1188. ],
+       [3160.5]]), array([[ 365.5],
+       [1615. ],
+       [2723. ]]), array([[ 958.5],
+       [1065.5],
+       [2018.5]])]
+[103.]
+[0.]
+[0.]
+[0.]
+[0.]
+[0.]
+[0.]
+[0.]
+[0.]
+[0.]

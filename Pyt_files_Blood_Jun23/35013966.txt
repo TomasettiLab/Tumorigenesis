@@ -1,0 +1,1205 @@
+0
+11.635158777236938
+3936.0
+the minimum ratio is : [1974.5856723] 
+The size of the largest crypt is : 8.274432146642837 
+The size of the largest crypt at 50 is : 8.212620923291956 
+The number of polyps is 6: 
+The number of polyps at age 50  is : 4 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+1
+10.60101056098938
+3936.0
+the minimum ratio is : [1972.88688048] 
+The size of the largest crypt is : 8.27454584276142 
+The size of the largest crypt at 50 is : 8.2006109656796 
+The number of polyps is 1: 
+The number of polyps at age 50  is : 1 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+2
+10.339270114898682
+3936.0
+the minimum ratio is : [2397.02363577] 
+The size of the largest crypt is : 7.9446222951203955 
+The size of the largest crypt at 50 is : 7.534194000798245 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+3
+9.75027847290039
+2714.0
+the minimum ratio is : [2870.45312735] 
+The size of the largest crypt is : 8.184449461396436 
+The size of the largest crypt at 50 is : 11.0 
+The number of polyps is 6: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 2 
+CASE number:1
+4
+12.69271183013916
+3936.0
+the minimum ratio is : [1883.74383879] 
+The size of the largest crypt is : 8.317865017554931 
+The size of the largest crypt at 50 is : 8.289925943970577 
+The number of polyps is 3: 
+The number of polyps at age 50  is : 3 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+5
+11.17969560623169
+3936.0
+the minimum ratio is : [1997.24515823] 
+The size of the largest crypt is : 8.258139205724369 
+The size of the largest crypt at 50 is : 8.175937723296324 
+The number of polyps is 3: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+6
+10.954018592834473
+3936.0
+the minimum ratio is : [1989.3324626] 
+The size of the largest crypt is : 8.265515291895774 
+The size of the largest crypt at 50 is : 8.223531155547477 
+The number of polyps is 2: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+7
+10.476588726043701
+3936.0
+the minimum ratio is : [2020.48322358] 
+The size of the largest crypt is : 8.255542494425137 
+The size of the largest crypt at 50 is : 8.171583563349568 
+The number of polyps is 3: 
+The number of polyps at age 50  is : 1 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+8
+10.425450325012207
+3936.0
+the minimum ratio is : [1943.4595078] 
+The size of the largest crypt is : 8.298519049733008 
+The size of the largest crypt at 50 is : 8.255923918877139 
+The number of polyps is 2: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+9
+11.714828729629517
+3936.0
+the minimum ratio is : [2135.32911824] 
+The size of the largest crypt is : 8.195083956782792 
+The size of the largest crypt at 50 is : 8.0176037235704 
+The number of polyps is 2: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+10
+11.8613600730896
+3936.0
+the minimum ratio is : [2023.59468695] 
+The size of the largest crypt is : 8.256741487241175 
+The size of the largest crypt at 50 is : 8.16311940208581 
+The number of polyps is 5: 
+The number of polyps at age 50  is : 3 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+11
+12.207144975662231
+3936.0
+the minimum ratio is : [1993.13697205] 
+The size of the largest crypt is : 8.259988895220433 
+The size of the largest crypt at 50 is : 8.17700766044958 
+The number of polyps is 5: 
+The number of polyps at age 50  is : 3 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+12
+11.119172811508179
+3936.0
+the minimum ratio is : [2035.0298671] 
+The size of the largest crypt is : 8.241956829431052 
+The size of the largest crypt at 50 is : 8.118538242157952 
+The number of polyps is 3: 
+The number of polyps at age 50  is : 1 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+13
+12.633225679397583
+3936.0
+the minimum ratio is : [1968.43440201] 
+The size of the largest crypt is : 8.293438568379408 
+The size of the largest crypt at 50 is : 8.244863821178862 
+The number of polyps is 5: 
+The number of polyps at age 50  is : 4 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+14
+11.150910139083862
+3936.0
+the minimum ratio is : [2132.3464773] 
+The size of the largest crypt is : 8.18510317382555 
+The size of the largest crypt at 50 is : 8.022643844093581 
+The number of polyps is 1: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+15
+10.515745401382446
+3936.0
+the minimum ratio is : [2338.16675676] 
+The size of the largest crypt is : 8.033959047281632 
+The size of the largest crypt at 50 is : 7.689799379177827 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+16
+10.612213134765625
+3936.0
+the minimum ratio is : [2211.01347254] 
+The size of the largest crypt is : 8.130013768618296 
+The size of the largest crypt at 50 is : 7.886205288637615 
+The number of polyps is 1: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+17
+12.403741121292114
+3936.0
+the minimum ratio is : [1898.74471102] 
+The size of the largest crypt is : 8.314384372105367 
+The size of the largest crypt at 50 is : 8.297859973929924 
+The number of polyps is 6: 
+The number of polyps at age 50  is : 6 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+18
+14.4923837184906
+3936.0
+the minimum ratio is : [1914.14663424] 
+The size of the largest crypt is : 8.295702901853337 
+The size of the largest crypt at 50 is : 8.277272779670536 
+The number of polyps is 16: 
+The number of polyps at age 50  is : 13 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+19
+11.631533861160278
+3936.0
+the minimum ratio is : [2012.51646536] 
+The size of the largest crypt is : 8.267437569055698 
+The size of the largest crypt at 50 is : 8.186433998380464 
+The number of polyps is 4: 
+The number of polyps at age 50  is : 3 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+20
+12.551210165023804
+3936.0
+the minimum ratio is : [1990.07078896] 
+The size of the largest crypt is : 8.279299159451877 
+The size of the largest crypt at 50 is : 8.215466206672591 
+The number of polyps is 7: 
+The number of polyps at age 50  is : 5 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+21
+11.41512680053711
+3936.0
+the minimum ratio is : [1970.37412245] 
+The size of the largest crypt is : 8.27684707073759 
+The size of the largest crypt at 50 is : 8.240408087125102 
+The number of polyps is 5: 
+The number of polyps at age 50  is : 3 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+22
+10.775190830230713
+3936.0
+the minimum ratio is : [2020.47492295] 
+The size of the largest crypt is : 8.243136818354397 
+The size of the largest crypt at 50 is : 8.16925566696195 
+The number of polyps is 3: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+23
+13.611011266708374
+3936.0
+the minimum ratio is : [1945.83300383] 
+The size of the largest crypt is : 8.304846628162057 
+The size of the largest crypt at 50 is : 8.26522772151791 
+The number of polyps is 11: 
+The number of polyps at age 50  is : 8 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+24
+11.143903732299805
+3936.0
+the minimum ratio is : [2102.92124266] 
+The size of the largest crypt is : 8.209291171890046 
+The size of the largest crypt at 50 is : 8.07158082640678 
+The number of polyps is 1: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+25
+11.998432874679565
+3936.0
+the minimum ratio is : [1963.79911404] 
+The size of the largest crypt is : 8.28320049689381 
+The size of the largest crypt at 50 is : 8.246827604076762 
+The number of polyps is 6: 
+The number of polyps at age 50  is : 4 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+26
+11.374504327774048
+3936.0
+the minimum ratio is : [1953.39763533] 
+The size of the largest crypt is : 8.279879896850547 
+The size of the largest crypt at 50 is : 8.236880659175087 
+The number of polyps is 5: 
+The number of polyps at age 50  is : 4 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+27
+11.05275583267212
+3936.0
+the minimum ratio is : [2180.24666924] 
+The size of the largest crypt is : 8.149913053349316 
+The size of the largest crypt at 50 is : 7.94245656914309 
+The number of polyps is 1: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+28
+12.037504196166992
+3936.0
+the minimum ratio is : [1955.54678438] 
+The size of the largest crypt is : 8.29575295142229 
+The size of the largest crypt at 50 is : 8.24711259198899 
+The number of polyps is 6: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+29
+11.866501569747925
+3936.0
+the minimum ratio is : [2081.82116733] 
+The size of the largest crypt is : 8.220663948278291 
+The size of the largest crypt at 50 is : 8.102509388450219 
+The number of polyps is 5: 
+The number of polyps at age 50  is : 1 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+30
+10.45678186416626
+3936.0
+the minimum ratio is : [2020.18240953] 
+The size of the largest crypt is : 8.265209193771122 
+The size of the largest crypt at 50 is : 8.20724663028251 
+The number of polyps is 3: 
+The number of polyps at age 50  is : 1 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+31
+11.313634634017944
+3936.0
+the minimum ratio is : [2074.0316007] 
+The size of the largest crypt is : 8.219035897451763 
+The size of the largest crypt at 50 is : 8.07015945573661 
+The number of polyps is 1: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+32
+11.411817789077759
+3936.0
+the minimum ratio is : [2019.81500889] 
+The size of the largest crypt is : 8.240158352149225 
+The size of the largest crypt at 50 is : 8.142028516950317 
+The number of polyps is 4: 
+The number of polyps at age 50  is : 1 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+33
+11.529359817504883
+3936.0
+the minimum ratio is : [2024.71352643] 
+The size of the largest crypt is : 8.239825562820942 
+The size of the largest crypt at 50 is : 8.149311900077016 
+The number of polyps is 3: 
+The number of polyps at age 50  is : 1 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+34
+11.628393173217773
+3936.0
+the minimum ratio is : [1998.94479924] 
+The size of the largest crypt is : 8.25904533735343 
+The size of the largest crypt at 50 is : 8.189721842943909 
+The number of polyps is 5: 
+The number of polyps at age 50  is : 3 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+35
+12.724872827529907
+3936.0
+the minimum ratio is : [1945.6708123] 
+The size of the largest crypt is : 8.294382890944183 
+The size of the largest crypt at 50 is : 8.27404529234633 
+The number of polyps is 9: 
+The number of polyps at age 50  is : 7 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+36
+13.981038331985474
+3936.0
+the minimum ratio is : [2012.05425619] 
+The size of the largest crypt is : 8.2597408548119 
+The size of the largest crypt at 50 is : 8.184911011925953 
+The number of polyps is 7: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+37
+12.612231969833374
+3936.0
+the minimum ratio is : [1931.7876175] 
+The size of the largest crypt is : 8.292831712633065 
+The size of the largest crypt at 50 is : 8.250836544640343 
+The number of polyps is 11: 
+The number of polyps at age 50  is : 7 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+38
+10.6893150806427
+3936.0
+the minimum ratio is : [2352.57422158] 
+The size of the largest crypt is : 8.01688699081017 
+The size of the largest crypt at 50 is : 7.661868288702483 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+39
+13.15978217124939
+3936.0
+the minimum ratio is : [1993.68140839] 
+The size of the largest crypt is : 8.272557165999872 
+The size of the largest crypt at 50 is : 8.219545715631885 
+The number of polyps is 8: 
+The number of polyps at age 50  is : 5 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+40
+10.25374722480774
+3936.0
+the minimum ratio is : [2237.54975014] 
+The size of the largest crypt is : 8.09974850726511 
+The size of the largest crypt at 50 is : 7.83103773556595 
+The number of polyps is 1: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+41
+14.519095420837402
+3936.0
+the minimum ratio is : [1931.97540196] 
+The size of the largest crypt is : 8.299079088600221 
+The size of the largest crypt at 50 is : 8.26899026228017 
+The number of polyps is 14: 
+The number of polyps at age 50  is : 10 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+42
+12.103271245956421
+3936.0
+the minimum ratio is : [1972.69764592] 
+The size of the largest crypt is : 8.278691323230552 
+The size of the largest crypt at 50 is : 8.212106450363509 
+The number of polyps is 7: 
+The number of polyps at age 50  is : 3 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+43
+11.848918676376343
+3936.0
+the minimum ratio is : [1994.19677237] 
+The size of the largest crypt is : 8.264225643664064 
+The size of the largest crypt at 50 is : 8.181897359987092 
+The number of polyps is 2: 
+The number of polyps at age 50  is : 1 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+44
+12.031242609024048
+3936.0
+the minimum ratio is : [2023.56614573] 
+The size of the largest crypt is : 8.244792207706958 
+The size of the largest crypt at 50 is : 8.138760468522253 
+The number of polyps is 4: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+45
+11.816937923431396
+3936.0
+the minimum ratio is : [2004.70385382] 
+The size of the largest crypt is : 8.267120159327424 
+The size of the largest crypt at 50 is : 8.190559659745599 
+The number of polyps is 6: 
+The number of polyps at age 50  is : 5 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+46
+12.068544387817383
+3936.0
+the minimum ratio is : [1987.69364149] 
+The size of the largest crypt is : 8.258796441397779 
+The size of the largest crypt at 50 is : 8.211937967878137 
+The number of polyps is 2: 
+The number of polyps at age 50  is : 1 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+47
+12.091624975204468
+3936.0
+the minimum ratio is : [2065.22080614] 
+The size of the largest crypt is : 8.24144784918892 
+The size of the largest crypt at 50 is : 8.143688302787128 
+The number of polyps is 1: 
+The number of polyps at age 50  is : 1 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+48
+11.517587900161743
+3936.0
+the minimum ratio is : [2050.70594498] 
+The size of the largest crypt is : 8.257829663868927 
+The size of the largest crypt at 50 is : 8.160906563398314 
+The number of polyps is 1: 
+The number of polyps at age 50  is : 1 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+49
+11.367024898529053
+3936.0
+the minimum ratio is : [2123.72336199] 
+The size of the largest crypt is : 8.175176163662096 
+The size of the largest crypt at 50 is : 7.994832645012592 
+The number of polyps is 3: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+50
+12.752435207366943
+3936.0
+the minimum ratio is : [1968.35227447] 
+The size of the largest crypt is : 8.283868460641754 
+The size of the largest crypt at 50 is : 8.252913883747057 
+The number of polyps is 8: 
+The number of polyps at age 50  is : 7 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+51
+11.189646482467651
+3936.0
+the minimum ratio is : [1999.20150399] 
+The size of the largest crypt is : 8.270361009594486 
+The size of the largest crypt at 50 is : 8.223374043640492 
+The number of polyps is 4: 
+The number of polyps at age 50  is : 1 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+52
+10.947257041931152
+3936.0
+the minimum ratio is : [1968.63966055] 
+The size of the largest crypt is : 8.27873404583209 
+The size of the largest crypt at 50 is : 8.236193559287697 
+The number of polyps is 2: 
+The number of polyps at age 50  is : 1 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+53
+10.934827089309692
+3936.0
+the minimum ratio is : [2243.96555154] 
+The size of the largest crypt is : 8.109193544823947 
+The size of the largest crypt at 50 is : 7.843193671141224 
+The number of polyps is 1: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+54
+9.910140752792358
+3936.0
+the minimum ratio is : [2197.21441136] 
+The size of the largest crypt is : 8.137988648166585 
+The size of the largest crypt at 50 is : 7.916354149372569 
+The number of polyps is 1: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+55
+13.051927089691162
+3936.0
+the minimum ratio is : [1935.4318313] 
+The size of the largest crypt is : 8.288883438254892 
+The size of the largest crypt at 50 is : 8.244303202433697 
+The number of polyps is 9: 
+The number of polyps at age 50  is : 5 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+56
+11.122304201126099
+3936.0
+the minimum ratio is : [2033.59094474] 
+The size of the largest crypt is : 8.233317719681521 
+The size of the largest crypt at 50 is : 8.13434124752175 
+The number of polyps is 4: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+57
+19.459167957305908
+3936.0
+the minimum ratio is : [1904.38967725] 
+The size of the largest crypt is : 8.308457177603769 
+The size of the largest crypt at 50 is : 8.277100569711116 
+The number of polyps is 5: 
+The number of polyps at age 50  is : 3 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+58
+10.249064445495605
+3936.0
+the minimum ratio is : [2160.93959976] 
+The size of the largest crypt is : 8.152941118092171 
+The size of the largest crypt at 50 is : 7.9400769278773895 
+The number of polyps is 2: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+59
+11.397106409072876
+3936.0
+the minimum ratio is : [1938.44043328] 
+The size of the largest crypt is : 8.297671827206983 
+The size of the largest crypt at 50 is : 8.27214320871747 
+The number of polyps is 4: 
+The number of polyps at age 50  is : 3 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+60
+10.72142505645752
+3936.0
+the minimum ratio is : [2013.80426013] 
+The size of the largest crypt is : 8.267658719583384 
+The size of the largest crypt at 50 is : 8.185943240126468 
+The number of polyps is 2: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+61
+13.893570899963379
+3936.0
+the minimum ratio is : [1952.14813831] 
+The size of the largest crypt is : 8.297410753395397 
+The size of the largest crypt at 50 is : 8.260938716573495 
+The number of polyps is 6: 
+The number of polyps at age 50  is : 5 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+62
+11.05665111541748
+3936.0
+the minimum ratio is : [1983.41076261] 
+The size of the largest crypt is : 8.269902469390566 
+The size of the largest crypt at 50 is : 8.197591492635855 
+The number of polyps is 1: 
+The number of polyps at age 50  is : 1 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+63
+12.248582601547241
+3936.0
+the minimum ratio is : [2034.0900149] 
+The size of the largest crypt is : 8.232002701090574 
+The size of the largest crypt at 50 is : 8.116118984059803 
+The number of polyps is 8: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+64
+10.921989440917969
+3936.0
+the minimum ratio is : [2050.58193206] 
+The size of the largest crypt is : 8.241811789827391 
+The size of the largest crypt at 50 is : 8.145818832045881 
+The number of polyps is 2: 
+The number of polyps at age 50  is : 1 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+65
+11.512632131576538
+3936.0
+the minimum ratio is : [2035.86868983] 
+The size of the largest crypt is : 8.256702759433136 
+The size of the largest crypt at 50 is : 8.167379588025053 
+The number of polyps is 3: 
+The number of polyps at age 50  is : 1 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+66
+12.561324119567871
+3936.0
+the minimum ratio is : [1988.33590546] 
+The size of the largest crypt is : 8.275586609996575 
+The size of the largest crypt at 50 is : 8.220553349047657 
+The number of polyps is 7: 
+The number of polyps at age 50  is : 5 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+67
+10.881624698638916
+3936.0
+the minimum ratio is : [2112.78190909] 
+The size of the largest crypt is : 8.195276133523699 
+The size of the largest crypt at 50 is : 8.046408374807221 
+The number of polyps is 1: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+68
+11.615224599838257
+3936.0
+the minimum ratio is : [1992.4584082] 
+The size of the largest crypt is : 8.270219454350546 
+The size of the largest crypt at 50 is : 8.205052897644435 
+The number of polyps is 3: 
+The number of polyps at age 50  is : 1 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+69
+12.293606758117676
+3936.0
+the minimum ratio is : [2069.85928198] 
+The size of the largest crypt is : 8.234028850315642 
+The size of the largest crypt at 50 is : 8.134722541079979 
+The number of polyps is 2: 
+The number of polyps at age 50  is : 1 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+70
+9.815967321395874
+3936.0
+the minimum ratio is : [2634.40282704] 
+The size of the largest crypt is : 7.696891150361004 
+The size of the largest crypt at 50 is : 7.141021915914298 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+71
+11.40544843673706
+3936.0
+the minimum ratio is : [1997.69038839] 
+The size of the largest crypt is : 8.267804637378637 
+The size of the largest crypt at 50 is : 8.183588706639611 
+The number of polyps is 4: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+72
+11.543537139892578
+3936.0
+the minimum ratio is : [2009.1880316] 
+The size of the largest crypt is : 8.253555810456058 
+The size of the largest crypt at 50 is : 8.168098795615611 
+The number of polyps is 3: 
+The number of polyps at age 50  is : 1 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+73
+11.581742286682129
+3936.0
+the minimum ratio is : [1985.55187778] 
+The size of the largest crypt is : 8.264909435320176 
+The size of the largest crypt at 50 is : 8.213639900082997 
+The number of polyps is 5: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+74
+12.127926349639893
+3936.0
+the minimum ratio is : [2152.66691099] 
+The size of the largest crypt is : 8.175455017963575 
+The size of the largest crypt at 50 is : 7.987882817534273 
+The number of polyps is 2: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+75
+13.266413450241089
+3936.0
+the minimum ratio is : [2124.23563525] 
+The size of the largest crypt is : 8.191197294502794 
+The size of the largest crypt at 50 is : 8.033622926317912 
+The number of polyps is 2: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+76
+16.318817377090454
+3936.0
+the minimum ratio is : [1979.88199941] 
+The size of the largest crypt is : 8.272107879787447 
+The size of the largest crypt at 50 is : 8.230618886303565 
+The number of polyps is 4: 
+The number of polyps at age 50  is : 3 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+77
+16.688408136367798
+3936.0
+the minimum ratio is : [1905.39211651] 
+The size of the largest crypt is : 8.310118610193129 
+The size of the largest crypt at 50 is : 8.280471907372194 
+The number of polyps is 8: 
+The number of polyps at age 50  is : 6 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+78
+16.940408945083618
+3936.0
+the minimum ratio is : [1948.83069377] 
+The size of the largest crypt is : 8.292851019347852 
+The size of the largest crypt at 50 is : 8.250321828461258 
+The number of polyps is 4: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+79
+11.037588834762573
+3936.0
+the minimum ratio is : [1964.81566467] 
+The size of the largest crypt is : 8.27818203175482 
+The size of the largest crypt at 50 is : 8.23910315367781 
+The number of polyps is 2: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+80
+12.679138660430908
+3936.0
+the minimum ratio is : [1948.17125755] 
+The size of the largest crypt is : 8.303508779433866 
+The size of the largest crypt at 50 is : 8.267059656577432 
+The number of polyps is 8: 
+The number of polyps at age 50  is : 6 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+81
+12.377123832702637
+3936.0
+the minimum ratio is : [2012.01673452] 
+The size of the largest crypt is : 8.263288193139049 
+The size of the largest crypt at 50 is : 8.203795579265911 
+The number of polyps is 4: 
+The number of polyps at age 50  is : 3 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+82
+13.524596452713013
+3936.0
+the minimum ratio is : [1936.87379392] 
+The size of the largest crypt is : 8.292281955422547 
+The size of the largest crypt at 50 is : 8.247291092190503 
+The number of polyps is 17: 
+The number of polyps at age 50  is : 16 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+83
+13.234279870986938
+3936.0
+the minimum ratio is : [1977.01389692] 
+The size of the largest crypt is : 8.274322653536677 
+The size of the largest crypt at 50 is : 8.222641009176392 
+The number of polyps is 6: 
+The number of polyps at age 50  is : 3 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+84
+9.968904972076416
+3936.0
+the minimum ratio is : [2231.33117804] 
+The size of the largest crypt is : 8.121135094816882 
+The size of the largest crypt at 50 is : 7.872442608662167 
+The number of polyps is 2: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+85
+10.857263565063477
+3936.0
+the minimum ratio is : [2131.03726285] 
+The size of the largest crypt is : 8.210939095937398 
+The size of the largest crypt at 50 is : 8.085151306887607 
+The number of polyps is 1: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+86
+11.869787454605103
+3936.0
+the minimum ratio is : [1958.96041887] 
+The size of the largest crypt is : 8.285267848677902 
+The size of the largest crypt at 50 is : 8.241760116367125 
+The number of polyps is 4: 
+The number of polyps at age 50  is : 3 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+87
+13.40553593635559
+3936.0
+the minimum ratio is : [1925.50971776] 
+The size of the largest crypt is : 8.291956335775032 
+The size of the largest crypt at 50 is : 8.26266080569548 
+The number of polyps is 11: 
+The number of polyps at age 50  is : 4 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+88
+13.263002634048462
+3936.0
+the minimum ratio is : [1931.05666455] 
+The size of the largest crypt is : 8.288986832370096 
+The size of the largest crypt at 50 is : 8.253882826618936 
+The number of polyps is 7: 
+The number of polyps at age 50  is : 6 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+89
+12.106706619262695
+3936.0
+the minimum ratio is : [1951.5957001] 
+The size of the largest crypt is : 8.271621953593964 
+The size of the largest crypt at 50 is : 8.21906560898986 
+The number of polyps is 5: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+90
+11.819785118103027
+3936.0
+the minimum ratio is : [1930.75253793] 
+The size of the largest crypt is : 8.307758866982068 
+The size of the largest crypt at 50 is : 8.279783245948819 
+The number of polyps is 1: 
+The number of polyps at age 50  is : 1 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+91
+12.468255519866943
+3936.0
+the minimum ratio is : [1954.29089206] 
+The size of the largest crypt is : 8.283197981014176 
+The size of the largest crypt at 50 is : 8.234212231318091 
+The number of polyps is 7: 
+The number of polyps at age 50  is : 3 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+92
+11.539355516433716
+3936.0
+the minimum ratio is : [1998.28435269] 
+The size of the largest crypt is : 8.262524313201093 
+The size of the largest crypt at 50 is : 8.19682228050447 
+The number of polyps is 2: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+93
+10.960881233215332
+3936.0
+the minimum ratio is : [2185.16976408] 
+The size of the largest crypt is : 8.147702909668212 
+The size of the largest crypt at 50 is : 7.950973953507641 
+The number of polyps is 1: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+94
+12.207941055297852
+3936.0
+the minimum ratio is : [1935.74177797] 
+The size of the largest crypt is : 8.29277400644008 
+The size of the largest crypt at 50 is : 8.260974182397222 
+The number of polyps is 5: 
+The number of polyps at age 50  is : 5 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+95
+11.632380247116089
+3936.0
+the minimum ratio is : [2059.77525243] 
+The size of the largest crypt is : 8.217566197063356 
+The size of the largest crypt at 50 is : 8.072650322956797 
+The number of polyps is 2: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+96
+13.15607476234436
+3936.0
+the minimum ratio is : [1961.6045717] 
+The size of the largest crypt is : 8.293019510065179 
+The size of the largest crypt at 50 is : 8.23326171578982 
+The number of polyps is 7: 
+The number of polyps at age 50  is : 6 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+97
+10.94245433807373
+3936.0
+the minimum ratio is : [2333.12762714] 
+The size of the largest crypt is : 8.036147304018348 
+The size of the largest crypt at 50 is : 7.7165436205458935 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+98
+9.883600950241089
+3936.0
+the minimum ratio is : [2253.69043493] 
+The size of the largest crypt is : 8.122714519236515 
+The size of the largest crypt at 50 is : 7.859888108108469 
+The number of polyps is 1: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+99
+11.756056308746338
+3936.0
+the minimum ratio is : [1963.20360069] 
+The size of the largest crypt is : 8.271113890681697 
+The size of the largest crypt at 50 is : 8.199096889708631 
+The number of polyps is 6: 
+The number of polyps at age 50  is : 2 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+The number of polyps is 0: 
+The number of polyps at age 50  is : 0 
+[array([[1020. ],
+       [2121.5],
+       [5000. ]])]
+[0.]

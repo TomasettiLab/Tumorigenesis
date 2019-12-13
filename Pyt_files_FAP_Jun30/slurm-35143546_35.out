@@ -1,0 +1,19 @@
+slurmstepd: error: task/cgroup: unable to add task[pid=27119] to memory cg '(null)'
+slurmstepd: error: xcgroup_instantiate: unable to create cgroup '/sys/fs/cgroup/memory/slurm/uid_1679' : No space left on device
+slurmstepd: error: jobacct_gather/cgroup: unable to instanciate user 1679 memory cgroup
+Note that users no longer need to load the SLURM module. You may remove 'module
+load slurm' from your scripts. 
+Please read this resource guide to understand the above behavior:
+https://www.marcc.jhu.edu/getting-started/working-with-modules-on-centos-7/ 
+
+Lmod is automatically replacing "intel/18.0" with "gcc/5.5.0".
+
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) openmpi/3.1
+
+Note that users no longer need to load the SLURM module. You may remove 'module
+load slurm' from your scripts. 
+Please read this resource guide to understand the above behavior:
+https://www.marcc.jhu.edu/getting-started/working-with-modules-on-centos-7/ 
+slurmstepd: error: *** JOB 35144672 ON compute0226 CANCELLED AT 2019-06-30T09:28:11 DUE TO TIME LIMIT ***
